@@ -14,8 +14,8 @@
 # download NW archives every time, instead, they are copied from
 # DEBUG_MODE_ARCHIVES directory.
 # Set to "FALSE" for production
-DEBUG="TRUE"
-DEBUG_MODE_ARCHIVES="/home/sasha/Desktop/nw"
+DEBUG="FALSE"
+DEBUG_MODE_ARCHIVES="/path/to/local/node-webkit/archives"
 
 # Current working directory
 WORKING_DIR=`pwd`
@@ -29,8 +29,8 @@ DL_URL="http://dl.node-webkit.org"
 # Sorces directory (relative to current directory where this script running from)
 PKG_SRC="../dist"
 
-# Binaries directory (relative to current directory where this script running from)
-RELEASE_DIR="nightlies"
+# Final output directory (relative to current directory where this script running from)
+RELEASE_DIR="output"
 
 # OSX "icns" and "plist" directory (relative to current directory where this script running from)
 OSX_RESOURCE="osx"
@@ -39,16 +39,19 @@ OSX_RESOURCE="osx"
 # This directory will be auto created
 TMP="TMP"
 
-# OSX "icns" and "plist" directory (relative to current directory where this script running from)
+# Date on the package archive as PkgName-YYYYMMDD-OS-architecture.zip
 DATE=$(date +"%Y%m%d")
 
+# Name of your package
 PKG_NAME="gisto"
 
+# Name of the package archive as PkgName-YYYYMMDD-OS-architecture.zip
+# OS and architecture is set by the script respectevely
 PKG_ARCHIVE_NAME="${PKG_NAME}-git-${DATE}"
 
 # --------------------------------------------------------------------
-# I guess you should not need to edit bellow this comment block
-# Unless you really want too
+# Guess you should not need to edit bellow this comment block
+# Unless you really want to
 # --------------------------------------------------------------------
 
 ARR_OS[0]="linux-ia32"
