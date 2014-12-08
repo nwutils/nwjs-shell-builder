@@ -145,8 +145,8 @@ make_bins() {
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/node-webkit.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
         rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
-        cp ${WORKING_DIR}/${OSX_RESOURCE}/gisto.icns ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
-        cp ${WORKING_DIR}/${OSX_RESOURCE}/Info.plist ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
+        cp ${OSX_RESOURCE}/gisto.icns ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
+        cp ${OSX_RESOURCE}/Info.plist ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
         zip -qq -r ${PKG_ARCHIVE_NAME}-${1}.zip *;
         mv ${PKG_ARCHIVE_NAME}-${1}.zip ${WORKING_DIR}/${TMP}/${RELEASE_DIR};
