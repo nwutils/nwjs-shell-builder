@@ -33,7 +33,7 @@ PKG_SRC="../dist"
 RELEASE_DIR="output"
 
 # OSX "icns" and "plist" directory (relative to current directory where this script running from)
-OSX_RESOURCE="osx"
+OSX_RESOURCE="../build/osx"
 
 # Temporary directory where all happens (relative to current directory where this script running from)
 # This directory will be auto created
