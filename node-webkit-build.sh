@@ -10,12 +10,12 @@
 # Cleaning: $ ./node-webkit-build.sh --clean
 # --------------------------------------------------------------------
 
-# Debug mode is usefull when testing the script and you don't want to
-# download NW archives every time, instead, they are copied from
-# DEBUG_MODE_ARCHIVES directory.
-# Set to "FALSE" for production
-DEBUG="FALSE"
-DEBUG_MODE_ARCHIVES="/path/to/local/node-webkit/archives"
+# LOCAL mode is usefull when:
+#   * You're testing the script and you don't want to download NW archives every time
+#   * You have the archives localy
+# default is "FALSE"
+LOCAL_NW_ARCHIVES_MODE="FALSE"
+LOCAL_NW_ARCHIVES_PATH="/path/to/local/node-webkit/archives"
 
 # Current working directory
 WORKING_DIR=`pwd`
@@ -27,13 +27,13 @@ NW_VERSION='0.11.2';
 DL_URL="http://dl.node-webkit.org"
 
 # Sorces directory (relative to current directory where this script running from)
-PKG_SRC="../dist"
+PKG_SRC="../../dist"
 
 # Final output directory (relative to current directory where this script running from)
 RELEASE_DIR="output"
 
 # OSX "icns" and "plist" directory (relative to current directory where this script running from)
-OSX_RESOURCE="../build/osx"
+OSX_RESOURCE="../../build/resources/osx"
 
 # Temporary directory where all happens (relative to current directory where this script running from)
 # This directory will be auto created
@@ -51,7 +51,7 @@ PKG_ARCHIVE_NAME="${PKG_NAME}-git-${DATE}"
 
 # --------------------------------------------------------------------
 # Guess you should not need to edit bellow this comment block
-# Unless you really want to
+# Unless you really want/need to
 # --------------------------------------------------------------------
 
 ARR_OS[0]="linux-ia32"
@@ -76,6 +76,7 @@ ARR_EXTRACT_COMMAND[4]="zip"
 ARR_EXTRACT_COMMAND[5]="zip"
 
 TXT_BOLD="\e[1m"
+TXT_NORMAL="\e[1m"
 TXT_RED="\e[31m"
 TXT_BLUE="\e[34m"
 TXT_GREEN="\e[32m"
@@ -94,16 +95,14 @@ usage() {
 }
 
 NOTE () {
+    printf "\n";
     printf "${TXT_NOTE} ${1} ${TXT_RESET} "
+    printf "\n";
 }
 
 clean(){
     rm -rf ${WORKING_DIR}/${TMP};
-    printf "Clean\n";
-}
-
-update() {
-    printf "Update\n";
+    NOTE "Removed \"${WORKING_DIR}/${TMP}\" directory and it's content";
 }
 
 extractme() {
@@ -145,8 +144,8 @@ make_bins() {
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/node-webkit.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
         rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
-        cp ${OSX_RESOURCE}/gisto.icns ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
-        cp ${OSX_RESOURCE}/Info.plist ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
+        cp -r ${WORKING_DIR}/${OSX_RESOURCE}/gisto.icns ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
+        cp -r ${WORKING_DIR}/${OSX_RESOURCE}/Info.plist ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
         zip -qq -r ${PKG_ARCHIVE_NAME}-${1}.zip *;
         mv ${PKG_ARCHIVE_NAME}-${1}.zip ${WORKING_DIR}/${TMP}/${RELEASE_DIR};
@@ -159,10 +158,10 @@ build() {
         mkdir -p ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git;
         DL_FILE="${WORKING_DIR}/${TMP}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}";
         if [[ ! -f ${DL_FILE} ]]; then
-            printf "\n"
-            NOTE 'WORKING'; printf "Bulding for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
-            if [[ ${DEBUG} = "TRUE" ]]; then
-                cp ${DEBUG_MODE_ARCHIVES}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP};
+            NOTE 'WORKING';
+            printf "Bulding for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
+            if [[ ${LOCAL_NW_ARCHIVES_MODE} = "TRUE" ]]; then
+                cp ${LOCAL_NW_ARCHIVES_PATH}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP};
             else
                 wget -P ${WORKING_DIR}/${TMP} ${DL_URL}/v${NW_VERSION}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]};
             fi
@@ -184,9 +183,7 @@ build() {
             printf "File ${TXT_BOLD}${TXT_YELLO}${DL_FILE}${TXT_RESET} exists.";
         fi
     done
-    printf "\n";
-    NOTE 'DONE';
-    printf "\n";
+    NOTE "DONE, You will find your \"${PKG_NAME}\" builds in \"${WORKING_DIR}/${RELEASE_DIR}\" directory";
 }
 
 if [[ ${1} = "--clean" ]]; then

@@ -13,7 +13,7 @@ Make proper configurations of paths in the file
 
 Building: `$ ./node-webkit-build.sh --build` - this will build all platforms and output _.zip_ files in release directory (called _output_ by default)
 
-Cleaning: `$ ./node-webkit-build.sh --clean` - this will clean everything script created to start the build proces over
+Cleaning: `$ ./node-webkit-build.sh --clean` - this will clean everything script created to start the build process over
 
 ### License 
 
