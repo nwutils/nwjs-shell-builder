@@ -16,7 +16,7 @@ WORKING_DIR="`dirname $THIS_SCRIPT`"
 #   * You're testing the script and you don't want to download NW archives every time
 #   * You have the archives localy
 # default is "FALSE"
-LOCAL_NW_ARCHIVES_MODE=1
+LOCAL_NW_ARCHIVES_MODE=false
 LOCAL_NW_ARCHIVES_PATH="/backup/Gisto/nw"
 
 # Wanted node-webkit version
