@@ -1,53 +1,50 @@
 #!/bin/bash
 ######################################################################
-# node-weblit bash build script                                      #
+# node-weblit shell build script                                     #
+######################################################################
+# For usage see: ./node-webkit-build.sh --help                       #
 ######################################################################
 
-# --------------------------------------------------------------------
-# Usage
-# --------------------------------------------------------------------
-# Building: $ ./node-webkit-build.sh --build
-# Cleaning: $ ./node-webkit-build.sh --clean
-# --------------------------------------------------------------------
+SCRIPT_VER='1.0'
+
+THIS_SCRIPT="`readlink -e $0`"
+
+# Current working directory
+WORKING_DIR="`dirname $THIS_SCRIPT`"
 
 # LOCAL mode is usefull when:
 #   * You're testing the script and you don't want to download NW archives every time
 #   * You have the archives localy
 # default is "FALSE"
-LOCAL_NW_ARCHIVES_MODE="FALSE"
-LOCAL_NW_ARCHIVES_PATH="/path/to/local/node-webkit/archives"
-
-# Current working directory
-WORKING_DIR=`pwd`
+LOCAL_NW_ARCHIVES_MODE=1
+LOCAL_NW_ARCHIVES_PATH="/backup/Gisto/nw"
 
 # Wanted node-webkit version
-NW_VERSION='0.11.2';
+NW_VERSION='0.11.3';
 
 # Base domain for node-webkit download server
 DL_URL="http://dl.node-webkit.org"
-
-# Sorces directory (relative to current directory where this script running from)
-PKG_SRC="../../dist"
-
-# Final output directory (relative to current directory where this script running from)
-RELEASE_DIR="output"
-
-# OSX "icns" and "plist" directory (relative to current directory where this script running from)
-OSX_RESOURCE="../../build/resources/osx"
 
 # Temporary directory where all happens (relative to current directory where this script running from)
 # This directory will be auto created
 TMP="TMP"
 
+# Sorces directory path
+PKG_SRC="../../dist"
+
+# Final output directory (relative to current directory where this script running from)
+RELEASE_DIR="${WORKING_DIR}/${TMP}/output"
+
+# Icons and other resources
+OSX_RESOURCE_PLIST="../../build/resources/osx/Info.plist"
+OSX_RESOURCE_ICNS="../../build/resources/osx/gisto.icns"
+WIN_RESOURCE_ICO="../../build/resources/windows/icon.ico"
+
 # Date on the package archive as PkgName-YYYYMMDD-OS-architecture.zip
 DATE=$(date +"%Y%m%d")
 
 # Name of your package
-PKG_NAME="gisto"
-
-# Name of the package archive as PkgName-YYYYMMDD-OS-architecture.zip
-# OS and architecture is set by the script respectevely
-PKG_ARCHIVE_NAME="${PKG_NAME}-git-${DATE}"
+PKG_NAME="myapp"
 
 # --------------------------------------------------------------------
 # Guess you should not need to edit bellow this comment block
@@ -85,13 +82,81 @@ TXT_RESET="\e[0m"
 TXT_NOTE="\e[30;48;5;82m"
 
 usage() {
-    printf "\n--- ${TXT_YELLO}NODE-WEBKIT-BUILD-BASH${TXT_RESET} ------------------------------\n\n"
-    printf "\tNode-weblit bash build script\n\tUse to build node-webkit apps from command line\n"
-    printf "\n--- ${TXT_YELLO}USAGE${TXT_RESET} -----------------------------------------------\n\n"
-    printf "\tBuilding: \n\t${TXT_GREEN}\$${TXT_RESET} ${TXT_BLUE}./node-webkit-build.sh --build${TXT_RESET}\n"
-    printf "\tCleaning: \n\t${TXT_GREEN}\$${TXT_RESET} ${TXT_BLUE}./node-webkit-build.sh --clean${TXT_RESET}\n"
-    printf "\tHelp: \n\t${TXT_GREEN}\$${TXT_RESET} ${TXT_BLUE}./node-webkit-build.sh --help${TXT_RESET}"
-    printf "\n---------------------------------------------------------\n"
+clear && cat <<EOF
+
+NAME
+
+    Node-Webkit shell builder
+
+SYNOPSIS
+
+    node-webkit-build.sh [-h|--help] [-v|--version]
+                      [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH]
+                      [--win-icon=PATH] [--osx-icon=PATH] [--osx-plist=PATH]
+                      [--build] [--clean]
+
+DESCRIPTION
+
+    Node-webkit bash builder for node-webkit applications.
+    This script can be easily integrated into your release process.
+    It will download node-webkit 32/64bit for Linux, Windows and OSX
+    and build for all 3 platforms from given source directory
+
+    Options can be set from within the script or via command line switches
+
+    The options are as follows:
+
+        -h, --help
+                Show help and usage (You are looking at it)
+
+        -v, --version
+                Show script version and exit (Current version is: ${SCRIPT_VER})
+
+        --name=NAME
+                Set package name (defaults to ${PKG_NAME})
+
+        --src=PATH
+                Set package name (defaults to ${PKG_SRC})
+
+        --nw=VERSION
+                Set node-webkit version to use (defaults to ${NW_VERSION})
+
+        --otput-dir=PATH
+                Change output directory (defaults to ${RELEASE_DIR})
+
+        --win-icon=PATH
+                Path to .ico file (defaults to ${WIN_RESOURCE_ICO})
+
+        --osx-icon=PATH
+                Path to .icns file (defaults to ${OSX_RESOURCE_ICNS})
+
+        --osx-plist=PATH
+                Path to .plist file (defaults to ${OSX_RESOURCE_PLIST})
+
+        --build
+                Start the build process (IMPORTANT! Must be the last parameter of the command)
+
+        --clean
+                Clean and remove ${TMP} directory
+
+EXAMPLES:
+
+    SHELL> ./node-webkit-build.sh
+            --src=${HOME}/projects/${PKG_NAME}/src
+            --otput-dir=${HOME}/${PKG_NAME}
+            --name=${PKG_NAME}
+            --build
+
+    SHELL> ./node-webkit-build.sh
+            --src=${HOME}/projects/${PKG_NAME}/src
+            --otput-dir=${HOME}/${PKG_NAME}
+            --name=${PKG_NAME}
+            --win-icon=${HOME}/projects/resorses/icon.ico
+            --osx-icon=${HOME}/projects/resorses/icon.icns
+            --osx-plist=${HOME}/projects/resorses/Info.plist
+            --build
+
+EOF
 }
 
 NOTE () {
@@ -119,36 +184,36 @@ split_string() {
 }
 
 make_bins() {
-    mkdir -p ${WORKING_DIR}/${TMP}/${RELEASE_DIR}
-    make_os=`split_string "${1}" "-"`;
+    mkdir -p ${RELEASE_DIR}
+    local make_os=`split_string "${1}" "-"`;
     if [[ ${make_os} = "linux" ]]; then
         cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
         chmod +x ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/{icudtl.dat,nw.pak} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-        zip -qq -r ${PKG_ARCHIVE_NAME}-${1}.zip *;
-        mv ${PKG_ARCHIVE_NAME}-${1}.zip ${WORKING_DIR}/${TMP}/${RELEASE_DIR};
+        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+        mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
     fi
     if [[ ${make_os} = "win" ]]; then
         cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/nw.exe ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
         rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
-        cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/{icudtl.dat,nw.pak,libEGL.dll,libGLESv2.dll,d3dcompiler_46.dll} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
+        cp ${WIN_RESOURCE_ICO} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/{icudtl.dat,nw.pak,libEGL.dll,libGLESv2.dll,d3dcompiler_46.dll} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-        zip -qq -r ${PKG_ARCHIVE_NAME}-${1}.zip *;
-        mv ${PKG_ARCHIVE_NAME}-${1}.zip ${WORKING_DIR}/${TMP}/${RELEASE_DIR};
+        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+        mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
     fi
     if [[ ${make_os} = "osx" ]]; then
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/node-webkit.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
         cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
         rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
-        cp -r ${WORKING_DIR}/${OSX_RESOURCE}/gisto.icns ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
-        cp -r ${WORKING_DIR}/${OSX_RESOURCE}/Info.plist ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
+        cp -r ${OSX_RESOURCE_ICNS} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
+        cp -r ${OSX_RESOURCE_PLIST} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-        zip -qq -r ${PKG_ARCHIVE_NAME}-${1}.zip *;
-        mv ${PKG_ARCHIVE_NAME}-${1}.zip ${WORKING_DIR}/${TMP}/${RELEASE_DIR};
+        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+        mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
     fi
 }
@@ -156,11 +221,11 @@ make_bins() {
 build() {
     for i in $(seq 0 5); do
         mkdir -p ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git;
-        DL_FILE="${WORKING_DIR}/${TMP}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}";
+        local DL_FILE="${WORKING_DIR}/${TMP}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}";
         if [[ ! -f ${DL_FILE} ]]; then
             NOTE 'WORKING';
-            printf "Bulding for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
-            if [[ ${LOCAL_NW_ARCHIVES_MODE} = "TRUE" ]]; then
+            printf "Bulding ${TXT_BOLD}${TXT_YELLO}${PKG_NAME}${TXT_RESET} for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
+            if [[ ${LOCAL_NW_ARCHIVES_MODE} = "TRUE" || ${LOCAL_NW_ARCHIVES_MODE} = "true" || ${LOCAL_NW_ARCHIVES_MODE} = "1" ]]; then
                 cp ${LOCAL_NW_ARCHIVES_PATH}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP};
             else
                 wget -P ${WORKING_DIR}/${TMP} ${DL_URL}/v${NW_VERSION}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]};
@@ -169,9 +234,9 @@ build() {
             mv ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit;
 
             if [[ `split_string "${ARR_OS[$i]}" "-"` = "osx" ]]; then
-                cp -r ${WORKING_DIR}/${PKG_SRC} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
+                cp -r ${PKG_SRC} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
             else
-                cd ${WORKING_DIR}/${PKG_SRC};
+                cd ${PKG_SRC};
                 zip -qq -r ${PKG_NAME}.zip *;
                 mv ${PKG_NAME}.zip ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
                 cd ${WORKING_DIR};
@@ -183,15 +248,68 @@ build() {
             printf "File ${TXT_BOLD}${TXT_YELLO}${DL_FILE}${TXT_RESET} exists.";
         fi
     done
-    NOTE "DONE, You will find your \"${PKG_NAME}\" builds in \"${WORKING_DIR}/${RELEASE_DIR}\" directory";
+    NOTE "DONE";
+    printf "You will find your '${PKG_NAME}' builds in '${RELEASE_DIR}' directory\n";
 }
 
-if [[ ${1} = "--clean" ]]; then
-    clean;
-elif [[ ${1} = "--build" ]]; then
-    build;
-elif [[ ${1} = "--help" ]]; then
-    usage;
-else
-    usage;
-fi
+### Arguments
+while true; do
+  case $1 in
+    -h | --help )
+        usage;
+        exit 0
+        ;;
+    -V | -v | --version )
+        printf '%s\n' "Version: ${SCRIPT_VER}";
+        exit 0
+        ;;
+    --nw=* )
+        NW_VERSION="${1#*=}";
+        shift
+        ;;
+    --name=* )
+        PKG_NAME="${1#*=}";
+        shift
+        ;;
+    --otput-dir=* )
+        RELEASE_DIR="${1#*=}";
+        shift
+        ;;
+    --src=* )
+        PKG_SRC="${1#*=}"
+        shift
+        ;;
+    --osx-icon=* )
+        OSX_RESOURCE_ICNS="${1#*=}"
+        shift
+        ;;
+    --osx-plist=* )
+        OSX_RESOURCE_PLIST="${1#*=}"
+        shift
+        ;;
+    --win-icon=* )
+        WIN_RESOURCE_ICO="${1#*=}"
+        shift
+        ;;
+    --clean )
+        clean;
+        exit 0
+        ;;
+    --build )
+        build;
+        exit 0
+        ;;
+    -- )
+        shift;
+        break
+        ;;
+    -* )
+        printf 'Hmmm, unknown option: "%s".\n' "${1}";
+        exit 0
+        ;;
+    * )
+        usage;
+        break
+        ;;
+  esac
+done
