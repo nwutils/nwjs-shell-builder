@@ -9,83 +9,126 @@ It will download node-webkit 32/64bit for Linux, Windows and OSX and build for a
 
 ### Usage:
 
-```
-$ ./node-webkit-build --help
-```
+`$ ./node-webkit-build --help`
 
 ```
-NAME
-
-    Node-Webkit shell builder
-
-SYNOPSIS
-
-    node-webkit-build.sh [-h|--help] [-v|--version]
-                      [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=PATH]
-                      [--win-icon=PATH] [--osx-icon=PATH] [--osx-plist=PATH]
-                      [--build] [--clean]
-
-DESCRIPTION
-
-    Node-webkit bash builder for node-webkit applications.
-    This script can be easily integrated into your release process.
-    It will download node-webkit 32/64bit for Linux, Windows and OSX
-    and build for all 3 platforms from given source directory
-
-    Options can be set from within the script or via command line switches
-
-    The options are as follows:
+The options are as follows:
 
         -h, --help
-                Show help and usage (You are looking at it)
+                Show help and usage
 
         -v, --version
-                Show script version and exit (Current version is: 1.0)
+                Show script version and exit
 
         --name=NAME
-                Set package name (defaults to myapp)
+                Set package name
 
         --src=PATH
-                Set package name (defaults to ../../dist)
+                Set package name
+
+        --target="2 3"
+                Build for particular OS or all (defaults to "0 1 2 3 4 5" - build for all)
+                Available target:
+                    0 - linux-ia32
+                    1 - linux-x64
+                    2 - win-ia32
+                    3 - win-x64
+                    4 - osx-ia32
+                    5 - osx-x64
 
         --nw=VERSION
-                Set node-webkit version to use (defaults to 0.11.3)
+                Set node-webkit version to use (defaults to 0.11.5)
 
         --otput-dir=PATH
-                Change output directory (defaults to /home/user/www/myapp/build/script/TMP/output)
+                Change output directory
 
         --win-icon=PATH
-                Path to .ico file (defaults to ../../build/resources/windows/icon.ico)
+                Path to .ico file
 
         --osx-icon=PATH
-                Path to .icns file (defaults to ../../build/resources/osx/myapp.icns)
+                Path to .icns file
 
         --osx-plist=PATH
-                Path to .plist file (defaults to ../../build/resources/osx/Info.plist)
+                Path to .plist file
 
         --build
                 Start the build process (IMPORTANT! Must be the last parameter of the command)
 
         --clean
                 Clean and remove TMP directory
-
-EXAMPLES:
-
-    SHELL> ./node-webkit-build.sh
-            --src=/home/user/projects/myapp/src
-            --otput-dir=/home/user/myapp
-            --name=myapp
-            --build
-
-    SHELL> ./node-webkit-build.sh
-            --src=/home/user/projects/myapp/src
-            --otput-dir=/home/user/myapp
-            --name=myapp
-            --win-icon=/home/user/projects/resorses/icon.ico
-            --osx-icon=/home/user/projects/resorses/icon.icns
-            --osx-plist=/home/user/projects/resorses/Info.plist
-            --build
 ```
+
+
+## EXAMPLES:
+
+```
+
+$ ./node-webkit-build.sh
+    --src=${HOME}/projects/${PKG_NAME}/src
+    --otput-dir=${HOME}/${PKG_NAME}
+    --name=${PKG_NAME}
+    --build
+
+
+$ ./node-webkit-build.sh
+    --src=${HOME}/projects/${PKG_NAME}/src
+    --otput-dir=${HOME}/${PKG_NAME}
+    --name=${PKG_NAME}
+    --win-icon=${HOME}/projects/resorses/icon.ico
+    --osx-icon=${HOME}/projects/resorses/icon.icns
+    --osx-plist=${HOME}/projects/resorses/Info.plist
+    --target="0 1 2 3 4 5"
+    --build
+
+```
+
+#### Build only for windows 64 and 32 bit targets:
+
+
+```
+
+$ ./node-webkit-build.sh
+    --src=${HOME}/projects/${PKG_NAME}/src
+    --otput-dir=${HOME}/${PKG_NAME}
+    --name=${PKG_NAME}
+    --win-icon=${HOME}/projects/resorses/icon.ico
+    --target="2 3"
+    --build
+
+```
+
+#### Build only for OSX 32 bit target:
+
+
+```
+
+$ ./node-webkit-build.sh
+    --src=${HOME}/projects/${PKG_NAME}/src
+    --otput-dir=${HOME}/${PKG_NAME}
+    --name=${PKG_NAME}
+    --osx-icon=${HOME}/projects/resorses/icon.icns
+    --osx-plist=${HOME}/projects/resorses/Info.plist
+    --target="4"
+    --build
+
+```
+
+#### Build only for all 64 bit
+
+```
+
+$ ./node-webkit-build.sh
+    --src=${HOME}/projects/${PKG_NAME}/src
+    --otput-dir=${HOME}/${PKG_NAME}
+    --name=${PKG_NAME}
+    --osx-icon=${HOME}/projects/resorses/icon.icns
+    --osx-plist=${HOME}/projects/resorses/Info.plist
+    --win-icon=${HOME}/projects/resorses/icon.ico
+    --target="1 3 5 "
+    --build
+
+```
+
 ### License 
 
 [MIT](https://github.com/Gisto/node-webkit-bash-builder/blob/master/LICENSE)

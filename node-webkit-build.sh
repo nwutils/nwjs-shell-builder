@@ -32,6 +32,15 @@ TMP="TMP"
 # Sorces directory path
 PKG_SRC="../../dist"
 
+# Build target(s)
+# 0 - linux-ia32
+# 1 - linux-x64
+# 2 - win-ia32
+# 3 - win-x64
+# 4 - osx-ia32
+# 5 - osx-x64
+TARGET="0 1 2 3 4 5"
+
 # Final output directory (relative to current directory where this script running from)
 RELEASE_DIR="${WORKING_DIR}/${TMP}/output"
 
@@ -91,7 +100,7 @@ NAME
 SYNOPSIS
 
     node-webkit-build.sh [-h|--help] [-v|--version]
-                      [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH]
+                      [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH] [--target="0 1 2 4 5"]
                       [--win-icon=PATH] [--osx-icon=PATH] [--osx-plist=PATH]
                       [--build] [--clean]
 
@@ -117,6 +126,16 @@ DESCRIPTION
 
         --src=PATH
                 Set package name (defaults to ${PKG_SRC})
+
+        --target="2 3"
+                Build for particular OS or all (defaults to ${TARGET})
+                Available target:
+                    0 - linux-ia32
+                    1 - linux-x64
+                    2 - win-ia32
+                    3 - win-x64
+                    4 - osx-ia32
+                    5 - osx-x64
 
         --nw=VERSION
                 Set node-webkit version to use (defaults to ${NW_VERSION})
@@ -154,7 +173,41 @@ EXAMPLES:
             --win-icon=${HOME}/projects/resorses/icon.ico
             --osx-icon=${HOME}/projects/resorses/icon.icns
             --osx-plist=${HOME}/projects/resorses/Info.plist
+            --target="0 1 2 3 4 5"
             --build
+
+    Build only for windows 64 and 32 bit targets:
+
+        SHELL> ./node-webkit-build.sh
+                --src=${HOME}/projects/${PKG_NAME}/src
+                --otput-dir=${HOME}/${PKG_NAME}
+                --name=${PKG_NAME}
+                --win-icon=${HOME}/projects/resorses/icon.ico
+                --target="2 3"
+                --build
+
+    Build only for OSX 32 bit target:
+
+        SHELL> ./node-webkit-build.sh
+                --src=${HOME}/projects/${PKG_NAME}/src
+                --otput-dir=${HOME}/${PKG_NAME}
+                --name=${PKG_NAME}
+                --osx-icon=${HOME}/projects/resorses/icon.icns
+                --osx-plist=${HOME}/projects/resorses/Info.plist
+                --target="4"
+                --build
+
+    Build only for all 64 bit
+
+        SHELL> ./node-webkit-build.sh
+                --src=${HOME}/projects/${PKG_NAME}/src
+                --otput-dir=${HOME}/${PKG_NAME}
+                --name=${PKG_NAME}
+                --osx-icon=${HOME}/projects/resorses/icon.icns
+                --osx-plist=${HOME}/projects/resorses/Info.plist
+                --win-icon=${HOME}/projects/resorses/icon.ico
+                --target="1 3 5 "
+                --build
 
 EOF
 }
@@ -219,7 +272,7 @@ make_bins() {
 }
 
 build() {
-    for i in $(seq 0 5); do
+    for i in ${TARGET}; do
         mkdir -p ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git;
         local DL_FILE="${WORKING_DIR}/${TMP}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}";
         if [[ ! -f ${DL_FILE} ]]; then
@@ -277,6 +330,10 @@ while true; do
         ;;
     --src=* )
         PKG_SRC="${1#*=}"
+        shift
+        ;;
+    --target=* )
+        TARGET="${1#*=}"
         shift
         ;;
     --osx-icon=* )
