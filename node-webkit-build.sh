@@ -55,6 +55,9 @@ DATE=$(date +"%Y%m%d")
 # Name of your package
 PKG_NAME="myapp"
 
+# Handle libudev on linux
+LIBUDEV_HANDLER=false
+
 # --------------------------------------------------------------------
 # Guess you should not need to edit bellow this comment block
 # Unless you really want/need to
@@ -102,7 +105,7 @@ SYNOPSIS
     node-webkit-build.sh [-h|--help] [-v|--version]
                       [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH] [--target="0 1 2 4 5"]
                       [--win-icon=PATH] [--osx-icon=PATH] [--osx-plist=PATH]
-                      [--build] [--clean]
+                      [--local] [--libudev] [--build] [--clean]
 
 DESCRIPTION
 
@@ -148,6 +151,14 @@ DESCRIPTION
 
         --osx-icon=PATH
                 Path to .icns file (defaults to ${OSX_RESOURCE_ICNS})
+
+        --libudev
+                Use if you want the script to hanle the lack of libudev (linux targets)
+                As mentioned here:
+                    https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0
+
+        --local
+                Use if you have the archives localy and dont want to download
 
         --osx-plist=PATH
                 Path to .plist file (defaults to ${OSX_RESOURCE_PLIST})
@@ -245,6 +256,37 @@ make_bins() {
         chmod +x ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/node-webkit/{icudtl.dat,nw.pak} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
+
+        if [[ ${LIBUDEV_HANDLER} = true ]];then
+        #libudev handler here
+        mv ${PKG_NAME} ${PKG_NAME}-bin
+cat << 'gisto_libudev_helper' >> ./${PKG_NAME}
+#!/bin/bash
+APP_WRAPPER="`readlink -f "${0}"`"
+HERE="`dirname "${APP_WRAPPER}"`"
+paths=(
+  "/lib/x86_64-linux-gnu/libudev.so.1" # Ubuntu, Xubuntu, Mint
+  "/usr/lib64/libudev.so.1" # SUSE, Fedora
+  "/usr/lib/libudev.so.1" # Arch, Fedora 32bit
+  "/lib/i386-linux-gnu/libudev.so.1" # Ubuntu 32bit
+)
+
+for i in "${paths[@]}"
+do
+  if [ -f ${i} ]
+  then
+    mkdir ${HERE}/lib
+    ln -sf "$i" ${HERE}/lib/libudev.so.0
+    break
+  fi
+done
+export LD_LIBRARY_PATH=$([ -n "$LD_LIBRARY_PATH" ] && echo "$HERE:$HERE/lib:$LD_LIBRARY_PATH" || echo "$HERE:$HERE/lib")
+exec -a "$0" "${HERE}/PACKAGE_NAME_PLACE_HOLDER-bin" "$@"
+gisto_libudev_helper
+        replace PACKAGE_NAME_PLACE_HOLDER ${PKG_NAME} -- ${PKG_NAME}
+        chmod +x ./${PKG_NAME}
+        fi
+
         zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
         mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
@@ -351,6 +393,14 @@ while true; do
     --clean )
         clean;
         exit 0
+        ;;
+     --local )
+        LOCAL_NW_ARCHIVES_MODE=true
+        shift
+        ;;
+    --libudev )
+        LIBUDEV_HANDLER=true
+        shift
         ;;
     --build )
         build;
