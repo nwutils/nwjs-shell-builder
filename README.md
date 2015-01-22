@@ -1,15 +1,15 @@
-node-webkit shell builder
+nwjs shell builder
 ========================
 
-Node-webkit shell builder for node-webkit applications.
+nwjs shell builder for nwjs applications.
 
 This script can be easily integrated into your release process.
 
-It will download node-webkit 32/64bit for Linux, Windows and OSX and build for all 3 platforms from given source directory
+It will download nwjs 32/64bit for Linux, Windows and OSX and build for all 3 platforms from given source directory
 
 ### Usage:
 
-`$ ./node-webkit-build --help`
+`$ ./nwjs-build --help`
 
 ```
 The options are as follows:
@@ -37,7 +37,7 @@ The options are as follows:
                     5 - osx-x64
 
         --nw=VERSION
-                Set node-webkit version to use (defaults to 0.11.5)
+                Set nwjs version to use (defaults to 0.11.5)
 
         --otput-dir=PATH
                 Change output directory
@@ -63,14 +63,14 @@ The options are as follows:
 
 ```
 
-$ ./node-webkit-build.sh
+$ ./nwjs-build.sh
     --src=${HOME}/projects/${PKG_NAME}/src
     --otput-dir=${HOME}/${PKG_NAME}
     --name=${PKG_NAME}
     --build
 
 
-$ ./node-webkit-build.sh
+$ ./nwjs-build.sh
     --src=${HOME}/projects/${PKG_NAME}/src
     --otput-dir=${HOME}/${PKG_NAME}
     --name=${PKG_NAME}
@@ -87,7 +87,7 @@ $ ./node-webkit-build.sh
 
 ```
 
-$ ./node-webkit-build.sh
+$ ./nwjs-build.sh
     --src=${HOME}/projects/${PKG_NAME}/src
     --otput-dir=${HOME}/${PKG_NAME}
     --name=${PKG_NAME}
@@ -102,7 +102,7 @@ $ ./node-webkit-build.sh
 
 ```
 
-$ ./node-webkit-build.sh
+$ ./nwjs-build.sh
     --src=${HOME}/projects/${PKG_NAME}/src
     --otput-dir=${HOME}/${PKG_NAME}
     --name=${PKG_NAME}
@@ -117,7 +117,7 @@ $ ./node-webkit-build.sh
 
 ```
 
-$ ./node-webkit-build.sh
+$ ./nwjs-build.sh
     --src=${HOME}/projects/${PKG_NAME}/src
     --otput-dir=${HOME}/${PKG_NAME}
     --name=${PKG_NAME}
@@ -131,4 +131,4 @@ $ ./node-webkit-build.sh
 
 ### License 
 
-[MIT](https://github.com/Gisto/node-webkit-bash-builder/blob/master/LICENSE)
+[MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
