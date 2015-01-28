@@ -5,7 +5,7 @@
 # For usage see: ./nwjs-build.sh --help                              #
 ######################################################################
 
-SCRIPT_VER='1.0.1'
+SCRIPT_VER='1.0.2'
 
 THIS_SCRIPT="`readlink -e $0`"
 
@@ -17,7 +17,7 @@ WORKING_DIR="`dirname $THIS_SCRIPT`"
 #   * You have the archives localy
 # default is "FALSE"
 LOCAL_NW_ARCHIVES_MODE=false
-LOCAL_NW_ARCHIVES_PATH="/backup/Gisto/nw"
+LOCAL_NW_ARCHIVES_PATH="${WORKING_DIR}/nwjs_download_cache"
 
 # Wanted nwjs version
 NW_VERSION='0.11.6';
@@ -316,14 +316,16 @@ gisto_libudev_helper
 build() {
     for i in ${TARGET}; do
         mkdir -p ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git;
-        local DL_FILE="${WORKING_DIR}/${TMP}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}";
-        if [[ ! -f ${DL_FILE} ]]; then
-            NOTE 'WORKING';
-            printf "Bulding ${TXT_BOLD}${TXT_YELLO}${PKG_NAME}${TXT_RESET} for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
-            if [[ ${LOCAL_NW_ARCHIVES_MODE} = "TRUE" || ${LOCAL_NW_ARCHIVES_MODE} = "true" || ${LOCAL_NW_ARCHIVES_MODE} = "1" ]]; then
-                cp ${LOCAL_NW_ARCHIVES_PATH}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP} || cp ${LOCAL_NW_ARCHIVES_PATH}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP};
+        mkdir -p ${LOCAL_NW_ARCHIVES_PATH};
+        NOTE 'WORKING';
+        printf "Bulding ${TXT_BOLD}${TXT_YELLO}${PKG_NAME}${TXT_RESET} for ${TXT_BOLD}${TXT_YELLO}${ARR_OS[$i]}${TXT_RESET}\n"
+        for DL_FILE in ${LOCAL_NW_ARCHIVES_PATH}/*-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}; do
+            if [[ -f "${DL_FILE}" || ${LOCAL_NW_ARCHIVES_MODE} = "TRUE" || ${LOCAL_NW_ARCHIVES_MODE} = "true" || ${LOCAL_NW_ARCHIVES_MODE} = "1" ]]; then
+                NOTE 'NOTE';
+                printf "File ${TXT_YELLO}nwjs-${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]}${TXT_RESET} is in the download cache\n- no need to re-download\n"
+                cp ${LOCAL_NW_ARCHIVES_PATH}/*-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${WORKING_DIR}/${TMP};
             else
-                wget -O ${WORKING_DIR}/${TMP}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${DL_URL}/v${NW_VERSION}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} || wget -O ${WORKING_DIR}/${TMP}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${DL_URL}/v${NW_VERSION}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]};
+                wget -O ${LOCAL_NW_ARCHIVES_PATH}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${DL_URL}/v${NW_VERSION}/node-webkit-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} || wget -O ${LOCAL_NW_ARCHIVES_PATH}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]} ${DL_URL}/v${NW_VERSION}/nwjs-v${NW_VERSION}-${ARR_OS[$i]}.${ARR_DL_EXT[$i]};
             fi
             extractme "${ARR_EXTRACT_COMMAND[$i]}" "${DL_FILE}" "${WORKING_DIR}/${TMP}/${ARR_OS[$i]}";
             mv ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/*-v${NW_VERSION}-${ARR_OS[$i]} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs;
@@ -338,10 +340,7 @@ build() {
             fi
             # Build binaries
             make_bins "${ARR_OS[$i]}";
-        else
-            NOTE 'NOTE';
-            printf "File ${TXT_BOLD}${TXT_YELLO}${DL_FILE}${TXT_RESET} exists.";
-        fi
+        done
     done
     NOTE "DONE";
     printf "You will find your '${PKG_NAME}' builds in '${RELEASE_DIR}' directory\n";
