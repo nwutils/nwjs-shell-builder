@@ -7,10 +7,8 @@
 
 SCRIPT_VER='1.0.2'
 
-THIS_SCRIPT="`readlink -e $0`"
-
 # Current working directory
-WORKING_DIR="`dirname $THIS_SCRIPT`"
+WORKING_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)";
 
 # LOCAL mode is usefull when:
 #   * You're testing the script and you don't want to download NW archives every time

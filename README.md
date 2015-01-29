@@ -64,19 +64,19 @@ The options are as follows:
 ```
 
 $ ./nwjs-build.sh
-    --src=${HOME}/projects/${PKG_NAME}/src
-    --otput-dir=${HOME}/${PKG_NAME}
-    --name=${PKG_NAME}
+    --src=/home/projects/myapp/src
+    --otput-dir=/home/myapp/output
+    --name=myapp
     --build
 
 
 $ ./nwjs-build.sh
-    --src=${HOME}/projects/${PKG_NAME}/src
-    --otput-dir=${HOME}/${PKG_NAME}
-    --name=${PKG_NAME}
-    --win-icon=${HOME}/projects/resorses/icon.ico
-    --osx-icon=${HOME}/projects/resorses/icon.icns
-    --osx-plist=${HOME}/projects/resorses/Info.plist
+    --src=/home/projects/myapp/src
+    --otput-dir=/home/myapp/output
+    --name=myapp
+    --win-icon=/home/projects/resorses/icon.ico
+    --osx-icon=/home/projects/resorses/icon.icns
+    --osx-plist=/home/projects/resorses/Info.plist
     --target="0 1 2 3 4 5"
     --build
 
@@ -88,10 +88,10 @@ $ ./nwjs-build.sh
 ```
 
 $ ./nwjs-build.sh
-    --src=${HOME}/projects/${PKG_NAME}/src
-    --otput-dir=${HOME}/${PKG_NAME}
-    --name=${PKG_NAME}
-    --win-icon=${HOME}/projects/resorses/icon.ico
+    --src=/home/projects/myapp/src
+    --otput-dir=/home/myapp
+    --name=myapp
+    --win-icon=/home/projects/resorses/icon.ico
     --target="2 3"
     --build
 
@@ -103,11 +103,11 @@ $ ./nwjs-build.sh
 ```
 
 $ ./nwjs-build.sh
-    --src=${HOME}/projects/${PKG_NAME}/src
-    --otput-dir=${HOME}/${PKG_NAME}
-    --name=${PKG_NAME}
-    --osx-icon=${HOME}/projects/resorses/icon.icns
-    --osx-plist=${HOME}/projects/resorses/Info.plist
+    --src=/home/projects/myapp/src
+    --otput-dir=/home/myapp
+    --name=myapp
+    --osx-icon=/home/projects/resorses/icon.icns
+    --osx-plist=/home/projects/resorses/Info.plist
     --target="4"
     --build
 
@@ -118,12 +118,12 @@ $ ./nwjs-build.sh
 ```
 
 $ ./nwjs-build.sh
-    --src=${HOME}/projects/${PKG_NAME}/src
-    --otput-dir=${HOME}/${PKG_NAME}
-    --name=${PKG_NAME}
-    --osx-icon=${HOME}/projects/resorses/icon.icns
-    --osx-plist=${HOME}/projects/resorses/Info.plist
-    --win-icon=${HOME}/projects/resorses/icon.ico
+    --src=/home/projects/myapp/src
+    --otput-dir=/home/myapp
+    --name=myapp
+    --osx-icon=/home/projects/resorses/icon.icns
+    --osx-plist=/home/projects/resorses/Info.plist
+    --win-icon=/home/projects/resorses/icon.ico
     --target="1 3 5 "
     --build
 
