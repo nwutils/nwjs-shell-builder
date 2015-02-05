@@ -5,7 +5,7 @@
 # For usage see: ./nwjs-build.sh --help                              #
 ######################################################################
 
-SCRIPT_VER='1.0.2'
+SCRIPT_VER='1.0.3'
 
 # Current working directory
 WORKING_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)";
@@ -17,7 +17,7 @@ WORKING_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)";
 LOCAL_NW_ARCHIVES_MODE=false
 LOCAL_NW_ARCHIVES_PATH="${WORKING_DIR}/nwjs_download_cache"
 
-# Wanted nwjs version
+# Default nwjs version
 NW_VERSION='0.11.6';
 
 # Base domain for nwjs download server
@@ -102,13 +102,14 @@ SYNOPSIS
 
     nwjs-build.sh [-h|--help] [-v|--version]
                       [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH] [--target="0 1 2 4 5"]
-                      [--win-icon=PATH] [--osx-icon=PATH] [--osx-plist=PATH]
-                      [--local] [--libudev] [--build] [--clean]
+                      [--win-icon=/FULL/PATH] [--osx-icon=/FULL/PATH] [--osx-plist=/FULL/PATH]
+                      [--local] [--libudev]
+                      [--build] [--clean]
 
 DESCRIPTION
 
-    nwjs bash builder for nwjs applications.
-    This script can be easily integrated into your release process.
+    nwjs shell script builder for nwjs applications.
+    This script can be easily integrated into your build process.
     It will download nwjs 32/64bit for Linux, Windows and OSX
     and build for all 3 platforms from given source directory
 
@@ -126,7 +127,7 @@ DESCRIPTION
                 Set package name (defaults to ${PKG_NAME})
 
         --src=PATH
-                Set package name (defaults to ${PKG_SRC})
+                Set path to source dir
 
         --target="2 3"
                 Build for particular OS or all (defaults to ${TARGET})
@@ -142,24 +143,21 @@ DESCRIPTION
                 Set nwjs version to use (defaults to ${NW_VERSION})
 
         --otput-dir=PATH
-                Change output directory (defaults to ${RELEASE_DIR})
+                Change output directory
 
         --win-icon=PATH
-                Path to .ico file (defaults to ${WIN_RESOURCE_ICO})
+                Path to .ico file
 
         --osx-icon=PATH
-                Path to .icns file (defaults to ${OSX_RESOURCE_ICNS})
+                Path to .icns file
 
         --libudev
                 Use if you want the script to hanle the lack of libudev (linux targets)
                 As mentioned here:
                     https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0
 
-        --local
-                Use if you have the archives localy and dont want to download
-
         --osx-plist=PATH
-                Path to .plist file (defaults to ${OSX_RESOURCE_PLIST})
+                Path to .plist file
 
         --build
                 Start the build process (IMPORTANT! Must be the last parameter of the command)
@@ -169,53 +167,57 @@ DESCRIPTION
 
 EXAMPLES:
 
-    SHELL> ./nwjs-build.sh
-            --src=${HOME}/projects/${PKG_NAME}/src
-            --otput-dir=${HOME}/${PKG_NAME}
-            --name=${PKG_NAME}
+    SHELL> ./nwjs-build.sh \\
+            --src=${HOME}/projects/${PKG_NAME}/src \\
+            --otput-dir=${HOME}/${PKG_NAME} \\
+            --name=${PKG_NAME} \\
+            --target="1 3 5 " \\
             --build
 
-    SHELL> ./nwjs-build.sh
-            --src=${HOME}/projects/${PKG_NAME}/src
-            --otput-dir=${HOME}/${PKG_NAME}
-            --name=${PKG_NAME}
-            --win-icon=${HOME}/projects/resorses/icon.ico
-            --osx-icon=${HOME}/projects/resorses/icon.icns
-            --osx-plist=${HOME}/projects/resorses/Info.plist
-            --target="0 1 2 3 4 5"
+    SHELL> ./nwjs-build.sh \\
+            --src=${HOME}/projects/${PKG_NAME}/src \\
+            --otput-dir=${HOME}/${PKG_NAME} \\
+            --name=${PKG_NAME} \\
+            --win-icon=${HOME}/projects/resorses/icon.ico \\
+            --osx-icon=${HOME}/projects/resorses/icon.icns \\
+            --osx-plist=${HOME}/projects/resorses/Info.plist \\
+            --target="0 1 2 3 4 5" \\
+            --libudev \\
+            --nw=0.11.6 \\
             --build
 
     Build only for windows 64 and 32 bit targets:
 
-        SHELL> ./nwjs-build.sh
-                --src=${HOME}/projects/${PKG_NAME}/src
-                --otput-dir=${HOME}/${PKG_NAME}
-                --name=${PKG_NAME}
-                --win-icon=${HOME}/projects/resorses/icon.ico
-                --target="2 3"
+        SHELL> ./nwjs-build.sh \\
+                --src=${HOME}/projects/${PKG_NAME}/src \\
+                --otput-dir=${HOME}/${PKG_NAME} \\
+                --name=${PKG_NAME} \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
+                --target="2 3" \\
                 --build
 
     Build only for OSX 32 bit target:
 
-        SHELL> ./nwjs-build.sh
-                --src=${HOME}/projects/${PKG_NAME}/src
-                --otput-dir=${HOME}/${PKG_NAME}
-                --name=${PKG_NAME}
-                --osx-icon=${HOME}/projects/resorses/icon.icns
-                --osx-plist=${HOME}/projects/resorses/Info.plist
-                --target="4"
+        SHELL> ./nwjs-build.sh \\
+                --src=${HOME}/projects/${PKG_NAME}/src \\
+                --otput-dir=${HOME}/${PKG_NAME} \\
+                --name=${PKG_NAME} \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
+                --osx-plist=${HOME}/projects/resorses/Info.plist \\
+                --target="4" \\
                 --build
 
     Build only for all 64 bit
 
-        SHELL> ./nwjs-build.sh
-                --src=${HOME}/projects/${PKG_NAME}/src
-                --otput-dir=${HOME}/${PKG_NAME}
-                --name=${PKG_NAME}
-                --osx-icon=${HOME}/projects/resorses/icon.icns
-                --osx-plist=${HOME}/projects/resorses/Info.plist
-                --win-icon=${HOME}/projects/resorses/icon.ico
-                --target="1 3 5 "
+        SHELL> ./nwjs-build.sh \\
+                --src=${HOME}/projects/${PKG_NAME}/src \\
+                --otput-dir=${HOME}/${PKG_NAME} \\
+                --name=${PKG_NAME} \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
+                --osx-plist=${HOME}/projects/resorses/Info.plist \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
+                --target="1 3 5 " \\
+                --libudev \\
                 --build
 
 EOF
