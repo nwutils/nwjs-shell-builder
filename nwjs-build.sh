@@ -43,15 +43,19 @@ TARGET="0 1 2 3 4 5"
 RELEASE_DIR="${WORKING_DIR}/${TMP}/output"
 
 # Icons and other resources
-OSX_RESOURCE_PLIST="../../build/resources/osx/Info.plist"
-OSX_RESOURCE_ICNS="../../build/resources/osx/gisto.icns"
-WIN_RESOURCE_ICO="../../build/resources/windows/icon.ico"
+OSX_RESOURCE_ICNS="../build/resources/osx/gisto.icns"
+WIN_RESOURCE_ICO="../../app/icon.ico"
 
 # Date on the package archive as PkgName-YYYYMMDD-OS-architecture.zip
 DATE=$(date +"%Y%m%d")
 
 # Name of your package
-PKG_NAME="myapp"
+PKG_NAME="${USER}app"
+
+# Package version
+PKG_VERSION="1.0.0"
+
+CFBundleIdentifier="com.${PKG_NAME}"
 
 # Handle libudev on linux
 LIBUDEV_HANDLER=false
@@ -92,19 +96,21 @@ TXT_RESET="\e[0m"
 TXT_NOTE="\e[30;48;5;82m"
 
 usage() {
-clear && cat <<EOF
-
+cat <<EOF
 NAME
 
     nwjs shell builder
 
 SYNOPSIS
 
-    nwjs-build.sh [-h|--help] [-v|--version]
-                      [--pkg-name=NAME] [--nw=VERSION] [--otput-dir=/FULL/PATH] [--target="0 1 2 4 5"]
-                      [--win-icon=/FULL/PATH] [--osx-icon=/FULL/PATH] [--osx-plist=/FULL/PATH]
-                      [--local] [--libudev]
-                      [--build] [--clean]
+    nwjs-build.sh [-h|--help]
+                  [--name=NAME] [--target="0 1 2 4 5"] [--version="X.X.X"]
+                  [--output-dir=/FULL/PATH] [--src=/PATH/TO/DIR]
+                  [--win-icon=/FULL/PATH]
+                  [--CFBundleIdentifier=com.bundle.name] [--osx-icon=/FULL/PATH]
+                  [--libudev]
+                  [--nw=VERSION]
+                  [--clean] [--build]
 
 DESCRIPTION
 
@@ -115,110 +121,132 @@ DESCRIPTION
 
     Options can be set from within the script or via command line switches
 
-    The options are as follows:
+OPTIONS
 
-        -h, --help
-                Show help and usage (You are looking at it)
+    -h, --help
 
-        -v, --version
-                Show script version and exit (Current version is: ${SCRIPT_VER})
+            Show help and usage (You are looking at it)
 
-        --name=NAME
-                Set package name (defaults to ${PKG_NAME})
+    --version=PAKAGE_VERSION
 
-        --src=PATH
-                Set path to source dir
+            Set package version (defaults to ${PKG_VERSION})
 
-        --target="2 3"
-                Build for particular OS or all (defaults to ${TARGET})
-                Available target:
-                    0 - linux-ia32
-                    1 - linux-x64
-                    2 - win-ia32
-                    3 - win-x64
-                    4 - osx-ia32
-                    5 - osx-x64
+    --name=NAME
 
-        --nw=VERSION
-                Set nwjs version to use (defaults to ${NW_VERSION})
+            Set package name (defaults to ${PKG_NAME})
 
-        --otput-dir=PATH
-                Change output directory
+    --src=/PATH/TO/DIR
 
-        --win-icon=PATH
-                Path to .ico file
+            Set path to source dir
 
-        --osx-icon=PATH
-                Path to .icns file
+    --target="2 3"
 
-        --libudev
-                Use if you want the script to hanle the lack of libudev (linux targets)
-                As mentioned here:
-                    https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0
+            Build for particular OS or all (defaults to ${TARGET})
+            Available target:
+                0 - linux-ia32
+                1 - linux-x64
+                2 - win-ia32
+                3 - win-x64
+                4 - osx-ia32
+                5 - osx-x64
 
-        --osx-plist=PATH
-                Path to .plist file
+    --nw=VERSION
 
-        --build
-                Start the build process (IMPORTANT! Must be the last parameter of the command)
+            Set nwjs version to use (defaults to ${NW_VERSION})
 
-        --clean
-                Clean and remove ${TMP} directory
+    --output-dir=/PATH/TO/DIR
 
-EXAMPLES:
+            Change output directory (if not set - will output to "${RELEASE_DIR}")
 
-    SHELL> ./nwjs-build.sh \\
-            --src=${HOME}/projects/${PKG_NAME}/src \\
-            --otput-dir=${HOME}/${PKG_NAME} \\
-            --name=${PKG_NAME} \\
-            --target="1 3 5 " \\
-            --build
+    --win-icon=/PATH/TO/FILE
 
-    SHELL> ./nwjs-build.sh \\
-            --src=${HOME}/projects/${PKG_NAME}/src \\
-            --otput-dir=${HOME}/${PKG_NAME} \\
-            --name=${PKG_NAME} \\
-            --win-icon=${HOME}/projects/resorses/icon.ico \\
-            --osx-icon=${HOME}/projects/resorses/icon.icns \\
-            --osx-plist=${HOME}/projects/resorses/Info.plist \\
-            --target="0 1 2 3 4 5" \\
-            --libudev \\
-            --nw=0.11.6 \\
-            --build
+            (For Windows target only) Path to .ico file (if not set - default will be used)
 
-    Build only for windows 64 and 32 bit targets:
+    --osx-icon=/PATH/TO/FILE
+
+            (For OSX target only) Path to .icns file (if not set - default will be used)
+
+    --CFBundleIdentifier=com.bundle.name
+
+            (For OSX target only) Name of the bundle’s Identifier, if not set - default will be used
+
+    --libudev
+
+            (For Linux target only) Use if you want the script to hanle the lack of libudev (linux targets)
+            As mentioned here:
+                https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0
+
+    --build
+
+            Start the build process (IMPORTANT! Must be the last parameter of the command)
+
+    --clean
+
+            Clean and remove ${TMP} directory
+
+EXAMPLES
+
+    THE BARE MINIMUM TO BUILD:
 
         SHELL> ./nwjs-build.sh \\
                 --src=${HOME}/projects/${PKG_NAME}/src \\
-                --otput-dir=${HOME}/${PKG_NAME} \\
+                --build
+
+    BUILD FOR ALL TARGETS:
+
+        SHELL> ./nwjs-build.sh \\
+                --src=${HOME}/projects/${PKG_NAME}/src \\
+                --output-dir=${HOME}/${PKG_NAME} \\
+                --name=${PKG_NAME} \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
+                --CFBundleExecutable=com.bundle.name \\
+                --target="0 1 2 3 4 5" \\
+                --version="1.0.0" \\
+                --libudev \\
+                --nw=0.11.6 \\
+                --build
+
+    BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS:
+
+        SHELL> ./nwjs-build.sh \\
+                --src=${HOME}/projects/${PKG_NAME}/src \\
+                --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
                 --win-icon=${HOME}/projects/resorses/icon.ico \\
                 --target="2 3" \\
+                --version="1.0.0" \\
                 --build
 
-    Build only for OSX 32 bit target:
+    BUILD ONLY FOR OSX 32 BIT TARGET:
 
         SHELL> ./nwjs-build.sh \\
                 --src=${HOME}/projects/${PKG_NAME}/src \\
-                --otput-dir=${HOME}/${PKG_NAME} \\
+                --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
                 --osx-icon=${HOME}/projects/resorses/icon.icns \\
-                --osx-plist=${HOME}/projects/resorses/Info.plist \\
                 --target="4" \\
+                --version="1.0.0" \\
                 --build
 
-    Build only for all 64 bit
+    BUILD ONLY FOR ALL 64 BIT
 
         SHELL> ./nwjs-build.sh \\
                 --src=${HOME}/projects/${PKG_NAME}/src \\
-                --otput-dir=${HOME}/${PKG_NAME} \\
+                --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
                 --osx-icon=${HOME}/projects/resorses/icon.icns \\
-                --osx-plist=${HOME}/projects/resorses/Info.plist \\
                 --win-icon=${HOME}/projects/resorses/icon.ico \\
                 --target="1 3 5 " \\
+                --version="1.0.0" \\
                 --libudev \\
                 --build
+
+LICENSE
+
+    MIT
+
+$(cat ${WORKING_DIR}/LICENSE)
 
 EOF
 }
@@ -251,13 +279,25 @@ make_bins() {
     mkdir -p ${RELEASE_DIR}
     local make_os=`split_string "${1}" "-"`;
     if [[ ${make_os} = "linux" ]]; then
-        cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
+        mk_linux ${1};
+    elif [[ ${make_os} = "win" ]]; then
+        mk_windows ${1};
+    elif [[ ${make_os} = "osx" ]]; then
+        mk_osx ${1};
+    else
+        printf "\nNo such target\n";
+        exit 1;
+    fi
+}
+
+mk_linux() {
+cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
         chmod +x ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/{icudtl.dat,nw.pak} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
 
-        if [[ ${LIBUDEV_HANDLER} = true ]];then
+        if [[ ${LIBUDEV_HANDLER} = "true" ]];then
         #libudev handler here
         mv ${PKG_NAME} ${PKG_NAME}-bin
 cat << 'gisto_libudev_helper' >> ./${PKG_NAME}
@@ -290,27 +330,79 @@ gisto_libudev_helper
         zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
         mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
-    fi
-    if [[ ${make_os} = "win" ]]; then
-        cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw.exe ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
-        rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
+}
+
+mk_windows() {
+    cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw.exe ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
+    rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
+    if [[ -f "${WIN_RESOURCE_ICO}" ]];then
         cp ${WIN_RESOURCE_ICO} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/{icudtl.dat,nw.pak,*.dll} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
-        cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
-        mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
-        cd ${WORKING_DIR};
     fi
-    if [[ ${make_os} = "osx" ]]; then
-        cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/*.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
-        cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
-        rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
+    cd ${WORKING_DIR}/${TMP}/${1}/latest-git
+    zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+    mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
+    cd ${WORKING_DIR};
+}
+
+mk_osx() {
+    cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/*.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
+    cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
+    rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
+
+    if [[ -f "${OSX_RESOURCE_ICNS}" ]];then
         cp -r ${OSX_RESOURCE_ICNS} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
-        cp -r ${OSX_RESOURCE_PLIST} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents
-        cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
-        mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
-        cd ${WORKING_DIR};
+    else
+        OSX_RESOURCE_ICNS="${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/node-webkit.app/Contents/Resources/nw.icns"
     fi
+    rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Info.plist
+cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Info.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>${PKG_NAME^}</string>
+	<key>CFBundleDocumentTypes</key>
+	<array/>
+	<key>CFBundleExecutable</key>
+	<string>node-webkit</string>
+	<key>CFBundleIconFile</key>
+    <string>$(echo "${OSX_RESOURCE_ICNS}" | rev | cut -d"/" -f1 | rev)</string>
+	<key>CFBundleIdentifier</key>
+	<string>${CFBundleIdentifier}</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PKG_NAME^}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${PKG_VERSION}</string>
+	<key>CFBundleVersion</key>
+	<string>${PKG_VERSION}</string>
+	<key>LSFileQuarantineEnabled</key>
+	<true/>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.6.0</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+    <string>Copyright (c) $(date +"%Y") ${PKG_NAME^}</string>
+	<key>SCMRevision</key>
+	<string>175484</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array/>
+</dict>
+</plist>
+gisto_plist_helper
+    cd ${WORKING_DIR}/${TMP}/${1}/latest-git
+    zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+    mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
+    cd ${WORKING_DIR};
 }
 
 build() {
@@ -350,11 +442,8 @@ build() {
 while true; do
   case $1 in
     -h | --help )
-        usage;
-        exit 0
-        ;;
-    -V | -v | --version )
-        printf '%s\n' "Version: ${SCRIPT_VER}";
+        clear > /dev/null;
+        usage | less;
         exit 0
         ;;
     --nw=* )
@@ -365,7 +454,11 @@ while true; do
         PKG_NAME="${1#*=}";
         shift
         ;;
-    --otput-dir=* )
+    --version=* )
+        PKG_VERSION="${1#*=}";
+        shift
+        ;;
+    --output-dir=* )
         RELEASE_DIR="${1#*=}";
         shift
         ;;
@@ -381,8 +474,8 @@ while true; do
         OSX_RESOURCE_ICNS="${1#*=}"
         shift
         ;;
-    --osx-plist=* )
-        OSX_RESOURCE_PLIST="${1#*=}"
+    --CFBundleIdentifier=* )
+        CFBundleIdentifier="${1#*=}"
         shift
         ;;
     --win-icon=* )
@@ -393,7 +486,7 @@ while true; do
         clean;
         exit 0
         ;;
-     --local )
+    --local )
         LOCAL_NW_ARCHIVES_MODE=true
         shift
         ;;
