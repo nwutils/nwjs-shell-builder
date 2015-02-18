@@ -21,64 +21,21 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
 
 ### Options:
 
-###### `-h, --help`
-
-Show help and usage
-
-###### `--version=PACKAGE_VERSION`
-
-Set package version (defaults to 1.0.0)
-
-###### `--name=NAME`
-
-Set package name (if not set - default will be used)
-
-###### `--src=/PATH/TO/DIR`
-
-Set path to source dir
-
-###### `--target="2 3"`
-
-Build for particular OS or all (default is to build for all targets)
-Available target:
-- 0 - linux-ia32
-- 1 - linux-x64
-- 2 - win-ia32
-- 3 - win-x64
-- 4 - osx-ia32
-- 5 - osx-x64
-
-###### `--nw=VERSION`
-
-Set nwjs version to use (if not set - default will be used)
-
-###### `--output-dir=/PATH/TO/DIR`
-
-Change output directory (if not set - default will be used)
-
-###### `--win-icon=/PATH/TO/FILE`
-
-(For Windows target only) Path to .ico file (if not set - default will be used)
-
-###### `--osx-icon=/PATH/TO/FILE`
-
-(For OSX target only) Path to .icns file (if not set - default will be used)
-
-###### `--CFBundleIdentifier=com.bundle.name`
-
-(For OSX target only) Name of the [bundle’s Identifier](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102070) (if not set - default will be used)
-
-###### `--libudev`
-
-(For Linux target only) Use if you want the script to handle the lack of _libudev.so.0_ (linux targets) as mentioned [here](https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0)
-
-###### `--build`
-
-Start the build process (**IMPORTANT!** Must be the last parameter of the command)
-
-###### `--clean`
-
-Clean and remove TMP directory
+| Option   |      Description |
+|:----------|:----------------|
+|`-h, --help`| Show help and usage |
+|`--version=PACKAGE_VERSION`|Set package version (defaults to 1.0.0)|
+|`--name=NAME`|Set package name (if not set - default will be used)|
+|`--src=/PATH/TO/DIR`|Set path to source dir|
+|`--target="2 3"`|Build for particular OS or all (default is to build for all targets) <br>Available targets: <br>- 0 - linux-ia32 <br>- 1 - linux-x64 <br>- 2 - win-ia32 <br>- 3 - win-x64 <br>- 4 - osx-ia32 <br>-  5 - osx-x64|
+|`--nw=VERSION`|Set nwjs version to use (if not set - default will be used)|
+|`--output-dir=/PATH/TO/DIR`|Change output directory (if not set - default will be used)|
+| `--win-icon=/PATH/TO/FILE`|(For Windows target only) Path to .ico file (if not set - default will be used)|
+|`--osx-icon=/PATH/TO/FILE`|(For OSX target only) Path to .icns file (if not set - default will be used)|
+|`--CFBundleIdentifier=com.bundle.name`|(For OSX target only) Name of the [bundle’s Identifier](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102070) (if not set - default will be used)|
+|`--libudev`|(For Linux target only) Use if you want the script to handle the lack of _libudev.so.0_ (linux targets) as mentioned [here](https://github.com/nwjs/nw.js/wiki/The-solution-of-lacking-libudev.so.0)|
+|`--build`|Start the build process (**IMPORTANT!** Must be the last parameter of the command)|
+|`--clean`|Clean and remove TMP directory|
 
 ### EXAMPLES
 ========================
@@ -145,7 +102,6 @@ Clean and remove TMP directory
         --version="1.0.0" \
         --libudev \
         --build
-
 ### License 
 
 [MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
