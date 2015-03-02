@@ -363,7 +363,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PKG_NAME^}</string>
+	<string>${PKG_NAME}</string>
 	<key>CFBundleDocumentTypes</key>
 	<array/>
 	<key>CFBundleExecutable</key>
@@ -375,7 +375,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PKG_NAME^}</string>
+	<string>${PKG_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -391,7 +391,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-    <string>Copyright (c) $(date +"%Y") ${PKG_NAME^}</string>
+    <string>Copyright (c) $(date +"%Y") ${PKG_NAME}</string>
 	<key>SCMRevision</key>
 	<string>175484</string>
 	<key>UTExportedTypeDeclarations</key>
