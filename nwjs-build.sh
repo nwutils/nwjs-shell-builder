@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ######################################################################
 # nwjs shell build script                                            #
 ######################################################################
 # For usage see: ./nwjs-build.sh --help                              #
 ######################################################################
 
-SCRIPT_VER='1.0.3'
+SCRIPT_VER='1.0.4'
 
 # Current working directory
 WORKING_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)";
@@ -257,6 +257,12 @@ NOTE () {
     printf "\n";
 }
 
+upper_case_word() {
+    word=${1}
+    therest=$(tr '[a-z]' '[A-Z]'<<<"${word:0:1}")
+    echo "${therest}${word:1}"
+}
+
 clean() {
     rm -rf ${WORKING_DIR}/${TMP};
     NOTE "Removed \"${WORKING_DIR}/${TMP}\" directory and it's content";
@@ -363,7 +369,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PKG_NAME^}</string>
+	<string>$(upper_case_word ${PKG_NAME})</string>
 	<key>CFBundleDocumentTypes</key>
 	<array/>
 	<key>CFBundleExecutable</key>
@@ -375,7 +381,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PKG_NAME^}</string>
+	<string>$(upper_case_word ${PKG_NAME})</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -391,7 +397,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-    <string>Copyright (c) $(date +"%Y") ${PKG_NAME^}</string>
+    <string>Copyright (c) $(date +"%Y") $(upper_case_word ${PKG_NAME})</string>
 	<key>SCMRevision</key>
 	<string>175484</string>
 	<key>UTExportedTypeDeclarations</key>
