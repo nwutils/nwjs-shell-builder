@@ -355,6 +355,13 @@ mk_osx() {
     cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
     rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
 
+	# check if it is nwjs or node-webkit
+	if [[ -d "${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nwjs.app" ]]; then
+		CFBundleExecutable="nwjs"
+	else
+		CFBundleExecutable="node-webkit"
+	fi
+
     if [[ -f "${OSX_RESOURCE_ICNS}" ]];then
         cp -r ${OSX_RESOURCE_ICNS} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
     else
@@ -373,7 +380,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 	<key>CFBundleDocumentTypes</key>
 	<array/>
 	<key>CFBundleExecutable</key>
-	<string>node-webkit</string>
+	<string>${CFBundleExecutable}</string>
 	<key>CFBundleIconFile</key>
     <string>$(echo "${OSX_RESOURCE_ICNS}" | rev | cut -d"/" -f1 | rev)</string>
 	<key>CFBundleIdentifier</key>
