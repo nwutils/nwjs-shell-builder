@@ -17,7 +17,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
     
 ### Usage:
 
-> If you want/have to build on Windows machine, use: [babun](http://babun.github.io/) as your shell. Tested on Wondows 8 but should work in Windows 7 too.
+> If you want/have to build on Windows machine, use: [Babun](http://babun.github.io/) as your shell. Tested on Windows 8 but should work on Windows 7 too. If you're missing an package (like ZIP), just install it via Babun with `pact` - a Babun provided package manager.
 
 `$ /path/to/nwjs-build.sh --help`
 
