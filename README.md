@@ -17,6 +17,8 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
     
 ### Usage:
 
+> If you want/have to build on Windows machine, use: [babun](http://babun.github.io/) as your shell. Tested on Wondows 8 but should work in Windows 7 too.
+
 `$ /path/to/nwjs-build.sh --help`
 
 ### Options:
