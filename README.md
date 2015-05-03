@@ -11,7 +11,7 @@ It will download nwjs 32/64bit for Linux, Windows and OSX and build for all 3 pl
 
 ## How we use it
 
-This script was made to help us automate nightly builds of [Gisto](http://wwwgistoapp.com)
+This script was made to help us automate nightly builds of [Gisto](http://www.gistoapp.com)
 
 You can see example usage in the CI script in Gisto repository: [drone.io script](https://github.com/Gisto/Gisto/blob/master/droneIO.sh)
     
