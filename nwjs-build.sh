@@ -198,9 +198,9 @@ EXAMPLES
                 --src=${HOME}/projects/${PKG_NAME}/src \\
                 --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
-                --win-icon=${HOME}/projects/resources/icon.ico \\
-                --osx-icon=${HOME}/projects/resources/icon.icns \\
-                --CFBundleExecutable=com.bundle.name \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
+                --CFBundleIdentifier=com.bundle.name \\
                 --target="0 1 2 3 4 5" \\
                 --version="1.0.0" \\
                 --libudev \\
@@ -213,7 +213,7 @@ EXAMPLES
                 --src=${HOME}/projects/${PKG_NAME}/src \\
                 --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
-                --win-icon=${HOME}/projects/resources/icon.ico \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
                 --target="2 3" \\
                 --version="1.0.0" \\
                 --build
@@ -224,7 +224,7 @@ EXAMPLES
                 --src=${HOME}/projects/${PKG_NAME}/src \\
                 --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
-                --osx-icon=${HOME}/projects/resources/icon.icns \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
                 --target="4" \\
                 --version="1.0.0" \\
                 --build
@@ -235,8 +235,8 @@ EXAMPLES
                 --src=${HOME}/projects/${PKG_NAME}/src \\
                 --output-dir=${HOME}/${PKG_NAME} \\
                 --name=${PKG_NAME} \\
-                --osx-icon=${HOME}/projects/resources/icon.icns \\
-                --win-icon=${HOME}/projects/resources/icon.ico \\
+                --osx-icon=${HOME}/projects/resorses/icon.icns \\
+                --win-icon=${HOME}/projects/resorses/icon.ico \\
                 --target="1 3 5 " \\
                 --version="1.0.0" \\
                 --libudev \\
