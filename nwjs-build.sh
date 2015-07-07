@@ -10,6 +10,13 @@ SCRIPT_VER='1.0.4'
 # Current working directory
 WORKING_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)";
 
+#determine if winresourcer is available (for embedding custom .ico in windows executable using Wine)
+if ! command -v winresourcer >/dev/null 2>&1; then
+    WINRESOURCER_AVAILABLE=false
+else
+    WINRESOURCER_AVAILABLE=true
+fi
+
 # LOCAL mode is usefull when:
 #   * You're testing the script and you don't want to download NW archives every time
 #   * You have the archives localy
@@ -339,14 +346,25 @@ gisto_libudev_helper
 }
 
 mk_windows() {
-    cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw.exe ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
-    rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
-    
     if [[ -f "${WIN_RESOURCE_ICO}" ]];then
         cp ${WIN_RESOURCE_ICO} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
     fi
-	cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/{icudtl.dat,nw.pak,*.dll} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
-	
+    # copy nw.exe to target
+    cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw.exe ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
+    if [[ "$WINRESOURCER_AVAILABLE" = "true" ]];then
+        # Run winresourcer (requires wine 1.7 and mono)
+        winresourcer --operation=Update --exeFile=${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe --resourceType=Icongroup --resourceName:IDR_MAINFRAME --lang:1033 --resourceFile:${WIN_RESOURCE_ICO}
+        # Remove iconfile
+        ICONFILENAME="${WIN_RESOURCE_ICO##*/}"
+        # cleanup now redundant icon
+        rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${ICONFILENAME}
+    fi
+    # append package.nw onto taget
+    cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.exe
+    cp ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/{icudtl.dat,nw.pak,*.dll} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
+    rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
+    
+    exit
     cd ${WORKING_DIR}/${TMP}/${1}/latest-git
     zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
     mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
