@@ -61,7 +61,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --name=PACKAGE_NAME \
         --win-icon=/home/projects/resorses/icon.ico \
         --osx-icon=/home/projects/resorses/icon.icns \
-        --CFBundleExecutable=com.bundle.name \
+        --CFBundleIdentifier=com.bundle.name \
         --target="0 1 2 3 4 5" \
         --version="1.0.0" \
         --libudev \
@@ -86,7 +86,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --output-dir=/path/to/output/the/builds \
         --name=PACKAGE_NAME \
         --osx-icon=/home/projects/resorses/icon.icns \
-        --CFBundleExecutable=com.bundle.name \
+        --CFBundleIdentifier=com.bundle.name \
         --target="4" \
         --version="1.0.0" \
         --build
@@ -99,7 +99,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --name=PACKAGE_NAME \
         --osx-icon=/home/projects/resorses/icon.icns \
         --win-icon=/home/projects/resorses/icon.ico \
-        --CFBundleExecutable=com.bundle.name \
+        --CFBundleIdentifier=com.bundle.name \
         --target="1 3 5 " \
         --version="1.0.0" \
         --libudev \
