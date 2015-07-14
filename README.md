@@ -2,7 +2,7 @@
 
 ## nwjs shell builder - packaging script
 
-- install NSIS ()
+- install NSIS
 - rename `config.json.sample` to `config.json` and adjust correct paths
 
 and run `./pack.sh`
