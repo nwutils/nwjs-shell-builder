@@ -1,8 +1,0 @@
-{
-  "name": "MyApp",
-  "version": "1.0.0",
-  "src": "/home/sasha/www/gisto/dist",
-  "nwjsVersion": "0.12.2",
-  "windowsIconPath": "/home/sasha/www/gisto/app/icon.ico",
-  "license": "/home/sasha/www/gisto/LICENSE"
-}
