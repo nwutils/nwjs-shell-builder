@@ -1,27 +1,36 @@
-nwjs shell builder
-========================
+# nwjs application shell builder and packager
+
+## nwjs shell builder - packaging script
+
+- install NSIS ()
+- rename `config.json.sample` to `config.json` and adjust correct paths
+
+and run `./pack.sh`
+
+## nwjs shell builder
+
 
 nwjs shell script builder for nwjs (node-webkit) applications.
 
 This script can be easily integrated into your build process.
     
-## How it works
+### How it works
     
 It will download nwjs 32/64bit for Linux, Windows and OSX and build for all 3 platforms from given source directory
 
-## How we use it
+### How we use it
 
 This script was made to help us automate nightly builds of [Gisto](http://www.gistoapp.com)
 
 You can see example usage in the CI script in Gisto repository: [drone.io script](https://github.com/Gisto/Gisto/blob/master/droneIO.sh)
     
-### Usage:
+#### Usage:
 
 > If you want/have to build on Windows machine, use: [Babun](http://babun.github.io/) as your shell. Tested on Windows 8 but should work on Windows 7 too. If you're missing an package (like ZIP), just install it via Babun with `pact` - a Babun provided package manager.
 
 `$ /path/to/nwjs-build.sh --help`
 
-### Options:
+#### Options:
 
 | Option   |      Description |
 |:----------|:----------------|
@@ -39,21 +48,21 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
 |`--build`|Start the build process (**IMPORTANT!** Must be the last parameter of the command)|
 |`--clean`|Clean and remove TMP directory|
 
-### EXAMPLES
+#### EXAMPLES
 ========================
 
-#### THE BARE MINIMUM TO BUILD:
+##### THE BARE MINIMUM TO BUILD:
 
     $ ./path/to/nwjs-build.sh \
         --src=/home/projects/PACKAGE_NAME/src \
         --build
         
-#### CLEAN WORKING DIR:
+##### CLEAN WORKING DIR:
 
     $ ./path/to/nwjs-build.sh \
         --clean
 
-#### BUILD FOR ALL TARGETS:
+##### BUILD FOR ALL TARGETS:
 
     $ ./path/to/nwjs-build.sh \
         --src=/home/projects/PACKAGE_NAME/src \
@@ -68,7 +77,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --nw=0.11.6 \
         --build
 
-#### BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS:
+##### BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS:
 
     $ ./path/to/nwjs-build.sh \
         --src=/home/projects/PACKAGE_NAME/src \
@@ -79,7 +88,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --version="1.0.0" \
         --build
 
-#### BUILD ONLY FOR OSX 32 BIT TARGET:
+##### BUILD ONLY FOR OSX 32 BIT TARGET:
 
     $ ./path/to/nwjs-build.sh \
         --src=/home/projects/PACKAGE_NAME/src \
@@ -91,7 +100,7 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --version="1.0.0" \
         --build
 
-#### BUILD ONLY FOR ALL 64 BIT
+##### BUILD ONLY FOR ALL 64 BIT
 
     $ ./path/to/nwjs-build.sh \
         --src=/home/projects/PACKAGE_NAME/src \
@@ -104,6 +113,6 @@ You can see example usage in the CI script in Gisto repository: [drone.io script
         --version="1.0.0" \
         --libudev \
         --build
-### License 
+#### License 
 
 [MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
