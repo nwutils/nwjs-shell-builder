@@ -13,6 +13,16 @@ and run:
 
 `./pack.sh --all` - to build installers for all systems
 
+### Hooks:
+
+Place hooks in `./hooks/` directory
+
+- file name `before.sh` will be executed before each build start
+- file name `after.sh` will be executed after packaging script is finished
+- file name `after_build.sh` will be executed after each platform build is finished
+
+
+
 ## nwjs shell builder
 nwjs shell script builder for nwjs (node-webkit) applications.
 

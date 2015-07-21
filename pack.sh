@@ -38,10 +38,19 @@ DESCRIPTION
     Build installers for Windows, Linux and OSX
 
 DEPENDENCIES
+
     NSIS, Zip, tar, ImageMagick
+
 USAGE
+
     Building:
     $ ./pack.sh [--linux|--mac|--windows|--all]
+
+    Hooks:
+    Place hhoks in "./hooks/" directory
+        - file name 'before.sh' will be executed befor each build
+        - file name 'after.sh' will be executed after pack script is finished
+        - file name 'after_build.sh' will be executed after each platform build is finished
 
 EOF
 }
@@ -55,7 +64,7 @@ check_dependencies() {
     fi
 }
 
-mklinux () {
+pack_linux () {
     for arch in ${architechture[@]}; do
         cd ${WORKING_DIR}
         cp -r ${BUILD_DIR}/resources/linux/PKGNAME-VERSION-Linux ${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
@@ -86,12 +95,12 @@ mklinux () {
     done;
 }
 
-mkosx () {
+pack_osx () {
     # TODO
     printf "\nNOTE! OSX packaging is not yet implemented\n\n";
 }
 
-mkwindows() {
+pack_windows() {
     for arch in ${architechture[@]}; do
         cd ${WORKING_DIR}
         cp -r ${BUILD_DIR}/resources/windows/app.nsi ${WORKING_DIR}
@@ -117,7 +126,7 @@ mkwindows() {
     done
 }
 
-prepare() {
+build() {
     if [[ `check_dependencies` = "NO" ]]; then
         printf "\nNOTE! NSIS or ImageMagick is missing in the system\n\n";
         exit 1;
@@ -136,6 +145,22 @@ prepare() {
     cd ${BUILD_DIR}
 }
 
+# Execute hooks
+hook() {
+    printf "\nNOTE! \"${1}\" hook executed\n\n";
+    case "$1" in
+        before)
+            ${BUILD_DIR}/hooks/before.sh
+            ;;
+        after)
+            ${BUILD_DIR}/hooks/after.sh
+            ;;
+        after_build)
+            ${BUILD_DIR}/hooks/after_build.sh
+            ;;
+    esac
+}
+
 # TODO maybe deal with cmd switches or leave it all in the config.json file
 
 if [[ ${1} = "--help" || ${1} = "-h" ]]; then
@@ -143,19 +168,31 @@ if [[ ${1} = "--help" || ${1} = "-h" ]]; then
 elif [[ ${1} = "--clean" ]]; then
     rm -rf ${WORKING_DIR}
 elif [[ ${1} = "--linux" ]]; then
-    prepare "0 1";
-    mklinux;
+    hook "before";
+    build "0 1";
+    hook "after_build";
+    pack_linux;
+    hook "after";
 elif [[ ${1} = "--osx" ]]; then
-    prepare "4 5";
-    mkosx;
+    hook "before";
+    build "4 5";
+    hook "after_build";
+    pack_osx;
+    hook "after";
 elif [[ ${1} = "--windows" ]]; then
-    prepare "2 3";
-    mkwindows;
+    hook "before";
+    build "2 3";
+    hook "after_build";
+    pack_windows;
+    hook "after";
 elif [[ ${1} = "--all" ]]; then
-    prepare "0 1 2 3 4 5";
-    mkosx;
-    mklinux;
-    mkwindows;
+    hook "before";
+    build "0 1 2 3 4 5";
+    hook "after_build";
+    pack_osx;
+    pack_linux;
+    pack_windows;
+    hook "after";
 else
     usage;
 fi
