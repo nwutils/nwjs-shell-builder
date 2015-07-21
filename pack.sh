@@ -5,6 +5,7 @@ set -e
 
 BUILD_DIR=`pwd`
 WORKING_DIR="${BUILD_DIR}/TMP"
+RELEASE_DIR="${BUILD_DIR}/releases"
 
 get_value_by_key() {
     JSON_FILE=${BUILD_DIR}/config.json
@@ -37,17 +38,17 @@ DESCRIPTION
     Build installers for Windows, Linux and OSX
 
 DEPENDENCIES
-
+    NSIS, Zip, tar, ImageMagick
 USAGE
     Building:
-            $ ./pack.sh
+    $ ./pack.sh [--linux|--mac|--windows|--all]
 
 EOF
 }
 
 check_dependencies() {
-    # Check if CMAKE is present
-    if [[ "`makensis`" =~ "MakeNSIS" ]]; then
+    # Check if NSIS is present
+    if [[ "`makensis`" =~ "MakeNSIS" && "`convert`" =~ "Version: ImageMagick" ]]; then
         echo 'OK';
     else
         echo 'NO';
@@ -55,8 +56,34 @@ check_dependencies() {
 }
 
 mklinux () {
-    # TODO
-    printf "\nNOTE! Linux packaging is not yet implemented\n\n";
+    for arch in ${architechture[@]}; do
+        cd ${WORKING_DIR}
+        cp -r ${BUILD_DIR}/resources/linux/PKGNAME-VERSION-Linux ${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
+        PKG_MK_DIR=${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
+        mv ${PKG_MK_DIR}/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)
+        mv ${PKG_MK_DIR}/$(get_value_by_key name)/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
+        # replaces
+        replace -s PKGNAME $(get_value_by_key name)} -- ${PKG_MK_DIR}/README
+        replace -s PKGDESCRIPTION $(get_value_by_key description) -- ${PKG_MK_DIR}/README
+        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
+        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/setup
+        # app file
+        cp $(get_value_by_key iconPath) ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).png
+        convert ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).png ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).xpm
+        cp ${BUILD_DIR}/TMP/linux-${arch}/latest-git/* ${PKG_MK_DIR}/$(get_value_by_key name)/
+        mv ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name) ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)-bin
+        # application
+        mv ${PKG_MK_DIR}/share/applications/PKGNAME.desktop ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
+        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
+        replace -s PKGVERSION $(get_value_by_key version) -- ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
+        # menu
+        mv ${PKG_MK_DIR}/share/menu/PKGNAME ${PKG_MK_DIR}/share/menu/$(get_value_by_key name)
+        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/share/menu/$(get_value_by_key name)
+        # make the tar
+        tar -C ${WORKING_DIR} -czf $(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}.tar.gz $(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
+        mv ${WORKING_DIR}/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}.tar.gz ${RELEASE_DIR}
+        printf "\nDone Linux ${arch}\n"
+    done;
 }
 
 mkosx () {
@@ -71,7 +98,7 @@ mkwindows() {
         cp -r $(get_value_by_key windowsIconPath) ${BUILD_DIR}/TMP/win-${arch}/latest-git/
         # Replce paths and vars in nsi script
         replace \
-            NWJS_APP_REPLACE_APPNAME $(get_value_by_key name) \
+            NWJS_APP_REPLACE_APPNAME $(get_value_by_key name)} \
             NWJS_APP_REPLACE_LICENSE $(get_value_by_key license) \
             NWJS_APP_REPLACE_VERSION $(get_value_by_key version) \
             NWJS_APP_REPLACE_EXE_NAME $(get_value_by_key name)-$(get_value_by_key version)-Windows-${arch}.exe \
@@ -85,51 +112,50 @@ mkwindows() {
         makensis app.nsi
         # Clean a bit
         rm -rf ${WORKING_DIR}/$(get_value_by_key name).nsi;
+        mv ${WORKING_DIR}/$(get_value_by_key name)-$(get_value_by_key version)-Windows-${arch}.exe ${RELEASE_DIR}
         printf "\nDone Windows ${arch}\n"
     done
 }
 
 prepare() {
+    if [[ `check_dependencies` = "NO" ]]; then
+        printf "\nNOTE! NSIS or ImageMagick is missing in the system\n\n";
+        exit 1;
+    fi
+    if [[ ! -d "${RELEASE_DIR}" ]]; then
+        mkdir ${RELEASE_DIR}
+    fi
     ${BUILD_DIR}/nwjs-build.sh \
         --src=$(get_value_by_key src) \
         --name=$(get_value_by_key name) \
         --nw=$(get_value_by_key nwjsVersion) \
         --win-icon=$(get_value_by_key windowsIconPath) \
-        --target="2 3" \
+        --target="${1}" \
         --version=$(get_value_by_key version) \
         --build
     cd ${BUILD_DIR}
 }
 
-if [[ `check_dependencies` = "NO" ]]; then
-    printf "\nNOTE!     NSIS is missing in the system\n\n";
-    exit 1;
+# TODO maybe deal with cmd switches or leave it all in the config.json file
+
+if [[ ${1} = "--help" || ${1} = "-h" ]]; then
+    usage;
+elif [[ ${1} = "--clean" ]]; then
+    rm -rf ${WORKING_DIR}
+elif [[ ${1} = "--linux" ]]; then
+    prepare "0 1";
+    mklinux;
+elif [[ ${1} = "--osx" ]]; then
+    prepare "4 5";
+    mkosx;
+elif [[ ${1} = "--windows" ]]; then
+    prepare "2 3";
+    mkwindows;
+elif [[ ${1} = "--all" ]]; then
+    prepare "0 1 2 3 4 5";
+    mkosx;
+    mklinux;
+    mkwindows;
+else
+    usage;
 fi
-prepare;
-mkwindows;
-
-
-#if [[ ${1} != "--clean" && ${2} = "" ]];then
-#    printf "\nVersion is required 2nd parameter\n"
-#elif [[ ${1} = "--help" || ${1} = "-h" ]]; then
-#    usage;
-#elif [[ ${1} = "--clean" ]]; then
-#    rm -rf ${WORKING_DIR}
-#    rm -rf ${PROJECT_DIR}/build/script/TMP
-#elif [[ ${1} = "--linux" ]]; then
-#    prepare ${2} "0 1" ${3};
-#    mklinux ${2};
-#elif [[ ${1} = "--osx" ]]; then
-#    prepare ${2} "4 5" ${3};
-#    mkosx ${2};
-#elif [[ ${1} = "--windows" ]]; then
-#    prepare ${2} "2 3" ${3};
-#    mkwindows ${2};
-#elif [[ ${1} = "--all" ]]; then
-#    prepare ${2} "0 1 2 3 4 5" ${3};
-#    mkosx ${2};
-#    mklinux ${2};
-#    mkwindows ${2};
-#else
-#    usage;
-#fi
