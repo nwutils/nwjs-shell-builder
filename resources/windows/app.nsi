@@ -83,7 +83,7 @@ Section Uninstall
 	Delete "$INSTDIR\libGLESv2.dll"
 	Delete "$INSTDIR\libEGL.dll"
 	Delete "$INSTDIR\nw.pak"
-	Delete "$INSTDIR\d3dcompiler_46.dll"
+	Delete "$INSTDIR\d3dcompiler_47.dll"
 	Delete "$INSTDIR\icon.ico"
 	RMDir "$INSTDIR\locales"
 

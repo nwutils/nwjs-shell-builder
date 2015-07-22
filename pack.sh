@@ -107,7 +107,7 @@ pack_windows() {
         cp -r $(get_value_by_key windowsIconPath) ${BUILD_DIR}/TMP/win-${arch}/latest-git/
         # Replce paths and vars in nsi script
         replace \
-            NWJS_APP_REPLACE_APPNAME $(get_value_by_key name)} \
+            NWJS_APP_REPLACE_APPNAME $(get_value_by_key name) \
             NWJS_APP_REPLACE_LICENSE $(get_value_by_key license) \
             NWJS_APP_REPLACE_VERSION $(get_value_by_key version) \
             NWJS_APP_REPLACE_EXE_NAME $(get_value_by_key name)-$(get_value_by_key version)-Windows-${arch}.exe \
