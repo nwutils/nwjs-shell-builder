@@ -139,3 +139,7 @@ $ ./path/to/nwjs-build.sh \
 
 #### License
 [MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
+
+# Thanks
+
+Huge thanks to @SchizoDuckie for assisting with OSX build

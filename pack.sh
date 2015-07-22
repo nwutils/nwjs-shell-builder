@@ -39,7 +39,7 @@ DESCRIPTION
 
 DEPENDENCIES
 
-    NSIS, Zip, tar, ImageMagick
+    NSIS, Zip, tar, ImageMagick, cpio
 
 USAGE
 
@@ -96,8 +96,67 @@ pack_linux () {
 }
 
 pack_osx () {
-    # TODO
-    printf "\nNOTE! OSX packaging is not yet implemented\n\n";
+    for arch in ${architechture[@]}; do
+        cd ${WORKING_DIR}
+        if [[ ! -d "${WORKING_DIR}/bomutils" ]]; then
+            git clone https://github.com/hogliux/bomutils && cd bomutils && make && cd ${WORKING_DIR}
+        fi
+        if [[ ! -d "${WORKING_DIR}/xar-1.5.2" ]]; then
+            wget https://xar.googlecode.com/files/xar-1.5.2.tar.gz && tar -zxvf ./xar-1.5.2.tar.gz && cd xar-1.5.2 && ./configure && make && cd ${WORKING_DIR}
+        fi
+
+        mkdir -p ${WORKING_DIR}/build_osx/flat/base.pkg
+        mkdir -p ${WORKING_DIR}/build_osx/flat/Resources/en.lproj
+        mkdir -p ${WORKING_DIR}/build_osx/root/Applications
+        cp -r "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
+        ( cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
+        COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
+        INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
+cat <<EOF > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
+<?xml version=”1.0" encoding=”utf-8" standalone="no"?>
+<pkg-info format-version="2" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" version="$(get_value_by_key version)" install-location="/" auth="root">
+    <payload installKBytes="${INSTALL_KB_SIZE}" numberOfFiles="${COUNT_FILES}"/>
+    <bundle-version>
+        <bundle id="$(get_value_by_key CFBundleIdentifier)" CFBundleIdentifier="$(get_value_by_key CFBundleIdentifier)" path="./Applications/$(get_value_by_key name).app" CFBundleVersion="$(get_value_by_key version)"/>
+    </bundle-version>
+    <update-bundle/>
+    <atomic-update-bundle/>
+    <strict-identifier/>
+    <relocate/>
+    <scripts/>
+</pkg-info>
+EOF
+
+cat <<EOF > ${WORKING_DIR}/build_osx/flat/Distribution
+<?xml version="1.0" encoding="utf-8"?>
+<installer-script minSpecVersion="1.000000" authoringTool="com.apple.PackageMaker" authoringToolVersion="3.0.3" authoringToolBuild="174">
+    <title>${PKG_NAME} $(get_value_by_key version)</title>
+    <options customize="never" allow-external-scripts="no"/>
+    <domains enable_anywhere="true"/>
+    <installation-check script="pm_install_check();"/>
+    <script>function pm_install_check() {
+      if(!(system.compareVersions(system.version.ProductVersion,'10.5') >= 0)) {
+        my.result.title = 'Failure';
+        my.result.message = 'You need at least Mac OS X 10.5 to install ${APPNAME}.';
+        my.result.type = 'Fatal';
+        return false;
+      }
+      return true;
+    }
+    </script>
+    <choices-outline>
+        <line choice="choice1"/>
+    </choices-outline>
+    <choice id="choice1" title="base">
+        <pkg-ref id="$(get_value_by_key CFBundleIdentifier).base.pkg"/>
+    </choice>
+    <pkg-ref id="$(get_value_by_key CFBundleIdentifier).base.pkg" installKBytes="${INSTALL_KB_SIZE}" version="$(get_value_by_key version)" auth="Root">#base.pkg</pkg-ref>
+</installer-script>
+EOF
+    ${WORKING_DIR}/bomutils/build/bin/mkbom -u 0 -g 80 ${WORKING_DIR}/build_osx/root ${WORKING_DIR}/build_osx/flat/base.pkg/Bom
+    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-${arch}.pkg" * )
+    printf "\nDone OSX ${arch}\n"
+    done;
 }
 
 pack_windows() {
@@ -141,8 +200,11 @@ build() {
         --name=$(get_value_by_key name) \
         --nw=$(get_value_by_key nwjsVersion) \
         --win-icon=$(get_value_by_key windowsIconPath) \
+        --osx-icon=$(get_value_by_key osxIconPath) \
+        --CFBundleIdentifier=$(get_value_by_key CFBundleIdentifier) \
         --target="${1}" \
         --version=$(get_value_by_key version) \
+        --libudev \
         --build
     cd ${BUILD_DIR}
 }
