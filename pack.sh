@@ -73,7 +73,7 @@ pack_linux () {
         mv ${PKG_MK_DIR}/$(get_value_by_key name)/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
         # replaces
         replace -s PKGNAME $(get_value_by_key name)} -- ${PKG_MK_DIR}/README
-        replace -s PKGDESCRIPTION $(get_value_by_key description) -- ${PKG_MK_DIR}/README
+        replace -s PKGDESCRIPTION "$(get_value_by_key description)" -- ${PKG_MK_DIR}/README
         replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
         replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/setup
         # app file
@@ -107,7 +107,8 @@ pack_windows() {
         cp -r $(get_value_by_key windowsIconPath) ${BUILD_DIR}/TMP/win-${arch}/latest-git/
         # Replce paths and vars in nsi script
         replace \
-            NWJS_APP_REPLACE_APPNAME $(get_value_by_key name) \
+            NWJS_APP_REPLACE_APPNAME "$(get_value_by_key name)" \
+            NWJS_APP_REPLACE_DESCRIPTION "$(get_value_by_key description)" \
             NWJS_APP_REPLACE_LICENSE $(get_value_by_key license) \
             NWJS_APP_REPLACE_VERSION $(get_value_by_key version) \
             NWJS_APP_REPLACE_EXE_NAME $(get_value_by_key name)-$(get_value_by_key version)-Windows-${arch}.exe \
@@ -117,6 +118,7 @@ pack_windows() {
             NWJS_APP_REPLACE_INC_FILE_4 ${BUILD_DIR}/TMP/win-${arch}/latest-git/libGLESv2.dll \
             NWJS_APP_REPLACE_INC_FILE_5 ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw.pak \
             NWJS_APP_REPLACE_INC_FILE_6 ${BUILD_DIR}/TMP/win-${arch}/latest-git/d3dcompiler_47.dll \
+            NWJS_APP_REPLACE_ICO_FILE_NAME $(basename $(get_value_by_key windowsIconPath)) \
             NWJS_APP_REPLACE_INC_FILE_ICO $(get_value_by_key windowsIconPath) -- app.nsi;
         makensis app.nsi
         # Clean a bit

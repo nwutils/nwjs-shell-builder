@@ -41,10 +41,11 @@ Section "${APPNAME}" Section1
 	File "NWJS_APP_REPLACE_INC_FILE_5"
 	File "NWJS_APP_REPLACE_INC_FILE_6"
 	File "NWJS_APP_REPLACE_INC_FILE_ICO"
-	CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${APPNAME}.exe" "" $INSTDIR\icon.ico" 0
+
+	CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${APPNAME}.exe" "" $INSTDIR\NWJS_APP_REPLACE_ICO_FILE_NAME" 0
 	CreateDirectory "$SMPROGRAMS\${APPNAME}"
-	CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\${APPNAME}.exe" "" $INSTDIR\icon.ico" 0
-	CreateShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" $INSTDIR\icon.ico" 0
+	CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\${APPNAME}.exe" "" $INSTDIR\NWJS_APP_REPLACE_ICO_FILE_NAME" 0
+	CreateShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" $INSTDIR\NWJS_APP_REPLACE_ICO_FILE_NAME" 0
 
 SectionEnd
 
@@ -78,21 +79,11 @@ Section Uninstall
 	Delete "$SMPROGRAMS\${APPNAME}\Uninstall.lnk"
 
 	;;; Clean up ${APPNAME}
-	Delete "$INSTDIR\icudtl.dat"
-	Delete "$INSTDIR\${APPNAME}.exe"
-	Delete "$INSTDIR\libGLESv2.dll"
-	Delete "$INSTDIR\libEGL.dll"
-	Delete "$INSTDIR\nw.pak"
-	Delete "$INSTDIR\d3dcompiler_47.dll"
-	Delete "$INSTDIR\icon.ico"
-	RMDir "$INSTDIR\locales"
-
-	;;; Remove remaining directories
+	RMDir /r /REBOOTOK $INSTDIR
 	RMDir "$SMPROGRAMS\${APPNAME}"
-	RMDir "$INSTDIR\"
 
 SectionEnd
 
-BrandingText "Snippets Made Awesome"
+BrandingText "NWJS_APP_REPLACE_DESCRIPTION"
 
 ;;; eof

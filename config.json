@@ -1,7 +1,7 @@
 {
   "name": "MyApp",
   "version": "1.0.0",
-  "description": "My app - cool app to do cool things",
+  "description": "My app description",
   "src": "/home/sasha/www/gisto/dist",
   "nwjsVersion": "0.12.2",
   "iconPath": "/home/sasha/www/gisto/app/icon.png",
