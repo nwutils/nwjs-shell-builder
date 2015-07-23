@@ -7,13 +7,13 @@ What's in here:
 	- [How we use it](#how-we-use-it)
 	- [Usage](#usage)
 	- [Options](#options)
-	- [EXAMPLES](#examples)
-		- [THE BARE MINIMUM TO BUILD](#the-bare-minimum-to-build)
-		- [CLEAN WORKING DIR](#clean-working-dir)
-		- [BUILD FOR ALL TARGETS](#build-for-all-targets)
-		- [BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS](#build-only-for-windows-64-and-32-bit-targets)
-		- [BUILD ONLY FOR OSX 32 BIT TARGET](#build-only-for-osx-32-bit-target)
-		- [BUILD ONLY FOR ALL 64 BIT](#build-only-for-all-64-bit)
+	- [Examples](#examples)
+		- [The bare minimum to build](#the-bare-minimum-to-build)
+		- [Clean working dir](#clean-working-dir)
+		- [Build for all targets](#build-for-all-targets)
+		- [Build only for windows 64 and 32 bit targets](#build-only-for-windows-64-and-32-bit-targets)
+		- [build only for OSX 32 bit target](#build-only-for-osx-32-bit-target)
+		- [Build for all 64 bit](#build-only-for-all-64-bit)
 - [Packaging script](#nwjs-packaging-script)
 	- [Hooks](#hooks)
 	- [Usage](#usage-1)
@@ -56,10 +56,10 @@ Option                                 | Description
 `--build`                              | Start the build process (**IMPORTANT!** Must be the last parameter of the command)
 `--clean`                              | Clean and remove TMP directory
 
-#### EXAMPLES
+#### Examples
 ========================
 
-##### THE BARE MINIMUM TO BUILD:
+##### The bare minimum to build:
 
 ```
 $ ./path/to/nwjs-build.sh \
@@ -67,14 +67,14 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-##### CLEAN WORKING DIR:
+##### Clean working dir:
 
 ```
 $ ./path/to/nwjs-build.sh \
     --clean
 ```
 
-##### BUILD FOR ALL TARGETS:
+##### Build for all targets:
 
 ```
 $ ./path/to/nwjs-build.sh \
@@ -91,7 +91,7 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-##### BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS:
+##### Build only for windows 64 and 32 bit targets:
 
 ```
 $ ./path/to/nwjs-build.sh \
@@ -104,7 +104,7 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-##### BUILD ONLY FOR OSX 32 BIT TARGET:
+##### Build only for osx 32 bit target:
 
 ```
 $ ./path/to/nwjs-build.sh \
@@ -118,7 +118,7 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-##### BUILD ONLY FOR ALL 64 BIT
+##### Build for all 64 bit:
 
 ```
 $ ./path/to/nwjs-build.sh \
@@ -134,7 +134,7 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-## nwjs packaging script
+## NWJS packaging script
 
 - install if not present zip, unzip, tar, git, NSIS
 - rename `config.json.sample` to `config.json` and adjust correct paths
@@ -161,5 +161,4 @@ Place hooks in `./hooks/` directory
 [MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
 
 # Thanks
-
 Huge thanks to @SchizoDuckie for assisting with OSX build

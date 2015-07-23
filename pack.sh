@@ -112,8 +112,8 @@ pack_osx () {
         (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
         COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
         INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
-cat <<EOF > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
-<?xml version=”1.0" encoding=”utf-8" standalone="no"?>
+cat << osx_packageinfo_helper >> ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <pkg-info format-version="2" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" version="$(get_value_by_key version)" install-location="/" auth="root">
     <payload installKBytes="${INSTALL_KB_SIZE}" numberOfFiles="${COUNT_FILES}"/>
     <bundle-version>
@@ -125,9 +125,9 @@ cat <<EOF > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
     <relocate/>
     <scripts/>
 </pkg-info>
-EOF
+osx_packageinfo_helper
 
-cat <<EOF > ${WORKING_DIR}/build_osx/flat/Distribution
+cat << 'osx_distribution_helper' >> ${WORKING_DIR}/build_osx/flat/Distribution
 <?xml version="1.0" encoding="utf-8"?>
 <installer-script minSpecVersion="1.000000" authoringTool="com.apple.PackageMaker" authoringToolVersion="3.0.3" authoringToolBuild="174">
     <title>${PKG_NAME} $(get_value_by_key version)</title>
@@ -152,9 +152,10 @@ cat <<EOF > ${WORKING_DIR}/build_osx/flat/Distribution
     </choice>
     <pkg-ref id="$(get_value_by_key CFBundleIdentifier).base.pkg" installKBytes="${INSTALL_KB_SIZE}" version="$(get_value_by_key version)" auth="Root">#base.pkg</pkg-ref>
 </installer-script>
-EOF
+osx_distribution_helper
+
     ${WORKING_DIR}/bomutils/build/bin/mkbom -u 0 -g 80 ${WORKING_DIR}/build_osx/root ${WORKING_DIR}/build_osx/flat/base.pkg/Bom
-    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-${arch}.pkg" * )
+    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" * )
     printf "\nDone OSX ${arch}\n"
     done;
 }
