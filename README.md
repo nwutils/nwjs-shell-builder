@@ -16,7 +16,7 @@ What's in here:
 		- [BUILD ONLY FOR ALL 64 BIT](#build-only-for-all-64-bit)
 - [Packaging script](#nwjs-packaging-script)
 	- [Hooks](#hooks)
-	- [Usage](#usage)
+	- [Usage](#usage-1)
 - [License](#license)
 - [Thanks](#thanks)
 
