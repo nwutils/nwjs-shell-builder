@@ -1,29 +1,26 @@
 # nwjs application shell builder and packager
-## nwjs shell builder - packaging script
-- install if not present zip, unzip, tar, git, NSIS
-- rename `config.json.sample` to `config.json` and adjust correct paths
 
-and run:
+What's in here:
 
-`./pack.sh --windows` - to build Windows installers
+- [Builder script](#nwjs-shell-builder-script)
+	- [How it works](#how-it-works)
+	- [How we use it](#how-we-use-it)
+	- [Usage](#usage)
+	- [Options](#options)
+	- [EXAMPLES](#examples)
+		- [THE BARE MINIMUM TO BUILD](#the-bare-minimum-to-build)
+		- [CLEAN WORKING DIR](#clean-working-dir)
+		- [BUILD FOR ALL TARGETS](#build-for-all-targets)
+		- [BUILD ONLY FOR WINDOWS 64 AND 32 BIT TARGETS](#build-only-for-windows-64-and-32-bit-targets)
+		- [BUILD ONLY FOR OSX 32 BIT TARGET](#build-only-for-osx-32-bit-target)
+		- [BUILD ONLY FOR ALL 64 BIT](#build-only-for-all-64-bit)
+- [Packaging script](#nwjs-packaging-script)
+	- [Hooks](#hooks)
+	- [Usage](#usage)
+- [License](#license)
+- [Thanks](#thanks)
 
-`./pack.sh --linux` - to build Linux installers
-
-`./pack.sh --osx` - to build OSX installers
-
-`./pack.sh --all` - to build installers for all systems
-
-### Hooks:
-
-Place hooks in `./hooks/` directory
-
-- file name `before.sh` will be executed before each build start
-- file name `after.sh` will be executed after packaging script is finished
-- file name `after_build.sh` will be executed after each platform build is finished
-
-
-
-## nwjs shell builder
+## nwjs shell builder script
 nwjs shell script builder for nwjs (node-webkit) applications.
 
 This script can be easily integrated into your build process.
@@ -36,7 +33,7 @@ This script was made to help us automate nightly builds of [Gisto](http://www.gi
 
 You can see example usage in the CI script in Gisto repository: [drone.io script](https://github.com/Gisto/Gisto/blob/master/droneIO.sh)
 
-#### Usage:
+### Usage:
 > If you want/have to build on Windows machine, use: [Babun](http://babun.github.io/) as your shell. Tested on Windows 8 but should work on Windows 7 too. If you're missing an package (like ZIP), just install it via Babun with `pact` - a Babun provided package manager.
 
 `$ /path/to/nwjs-build.sh --help`
@@ -136,6 +133,29 @@ $ ./path/to/nwjs-build.sh \
     --libudev \
     --build
 ```
+
+## nwjs packaging script
+
+- install if not present zip, unzip, tar, git, NSIS
+- rename `config.json.sample` to `config.json` and adjust correct paths
+
+### Usage:
+
+`./pack.sh --windows` - to build Windows installers
+
+`./pack.sh --linux` - to build Linux installers
+
+`./pack.sh --osx` - to build OSX installers
+
+`./pack.sh --all` - to build installers for all systems
+
+### Hooks:
+
+Place hooks in `./hooks/` directory
+
+- file name `before.sh` will be executed before each build start
+- file name `after.sh` will be executed after packaging script is finished
+- file name `after_build.sh` will be executed after each platform build is finished
 
 #### License
 [MIT](https://github.com/Gisto/nwjs-shell-builder/blob/master/LICENSE)
