@@ -109,7 +109,7 @@ pack_osx () {
         mkdir -p ${WORKING_DIR}/build_osx/flat/Resources/en.lproj
         mkdir -p ${WORKING_DIR}/build_osx/root/Applications
         cp -r "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
-        ( cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
+        (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
         COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
         INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
 cat <<EOF > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
