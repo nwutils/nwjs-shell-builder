@@ -22,8 +22,6 @@ if [[ ! -f "${WORKING_DIR}" ]]; then
     mkdir -p TMP
 fi
 
-cd TMP
-
 architechture="ia32 x64"
 
 usage() {
@@ -53,6 +51,35 @@ USAGE
         - file name 'after_build.sh' will be executed after each platform build is finished
 
 EOF
+}
+
+init_config_file() {
+  set -i
+  read -e -p "Application name (no spaces): " CONF_NAME;
+  read -e -p "Application version: " -i "1.0.0" CONF_VERSION;
+  read -e -p "Application description: " -i "${CONF_NAME} v${CONF_VERSION} Application" CONF_DESCRIPTION;
+  read -e -p "nwjs version to use: " -i "0.12.2" CONF_NW_VERSION;
+  read -e -p "Application src directory path: " CONF_SRC;
+  read -e -p "PNG icon path: " CONF_ICON_PNG;
+  read -e -p "Windows icon (.ico) path: " CONF_ICON_WIN;
+  read -e -p "OSX icon (.icns) path: " CONF_ICON_OSX;
+  read -e -p "OSX CFBundleIdentifier: " CONF_CFBundleIdentifier;
+  read -e -p "License file path: " CONF_LICENSE;
+
+cat << create_conf > config.json
+{
+  "name": "${CONF_NAME}",
+  "description": "${CONF_DESCRIPTION}",
+  "version": "${CONF_VERSION}",
+  "nwjsVersion": "${CONF_NW_VERSION}",
+  "src": "${CONF_SRC}",
+  "iconPath": "${CONF_ICON_PNG}",
+  "windowsIconPath": "${CONF_ICON_WIN}",
+  "osxIconPath": "${CONF_ICON_OSX}",
+  "CFBundleIdentifier": "${CONF_CFBundleIdentifier}",
+  "license": "${CONF_LICENSE}"
+}
+create_conf
 }
 
 check_dependencies() {
@@ -112,7 +139,7 @@ pack_osx () {
         (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
         COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
         INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
-cat << osx_packageinfo_helper >> ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
+cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <pkg-info format-version="2" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" version="$(get_value_by_key version)" install-location="/" auth="root">
     <payload installKBytes="${INSTALL_KB_SIZE}" numberOfFiles="${COUNT_FILES}"/>
@@ -127,7 +154,7 @@ cat << osx_packageinfo_helper >> ${WORKING_DIR}/build_osx/flat/base.pkg/PackageI
 </pkg-info>
 osx_packageinfo_helper
 
-cat << 'osx_distribution_helper' >> ${WORKING_DIR}/build_osx/flat/Distribution
+cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 <?xml version="1.0" encoding="utf-8"?>
 <installer-script minSpecVersion="1.000000" authoringTool="com.apple.PackageMaker" authoringToolVersion="3.0.3" authoringToolBuild="174">
     <title>${PKG_NAME} $(get_value_by_key version)</title>
@@ -226,31 +253,44 @@ hook() {
     esac
 }
 
+clean() {
+    if [[ ${1} = "all" ]];then
+        rm -rf ${RELEASE_DIR}; printf "\nCleaned ${RELEASE_DIR}\n\n";
+    fi
+    rm -rf ${WORKING_DIR}; printf "\nCleaned ${WORKING_DIR}\n\n";
+}
+
 # TODO maybe deal with cmd switches or leave it all in the config.json file
 
 if [[ ${1} = "--help" || ${1} = "-h" ]]; then
     usage;
+elif [[ ${1} = "init" ]]; then
+    init_config_file;
 elif [[ ${1} = "--clean" ]]; then
-    rm -rf ${WORKING_DIR}
+    clean ${2};
 elif [[ ${1} = "--linux" ]]; then
+    clean;
     hook "before";
     build "0 1";
     hook "after_build";
     pack_linux;
     hook "after";
 elif [[ ${1} = "--osx" ]]; then
+    clean;
     hook "before";
     build "4 5";
     hook "after_build";
     pack_osx;
     hook "after";
 elif [[ ${1} = "--windows" ]]; then
+    clean;
     hook "before";
     build "2 3";
     hook "after_build";
     pack_windows;
     hook "after";
 elif [[ ${1} = "--all" ]]; then
+    clean;
     hook "before";
     build "0 1 2 3 4 5";
     hook "after_build";

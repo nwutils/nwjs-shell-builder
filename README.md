@@ -137,7 +137,7 @@ $ ./path/to/nwjs-build.sh \
 ## NWJS packaging script
 
 - install if not present zip, unzip, tar, git, NSIS
-- rename `config.json.sample` to `config.json` and adjust correct paths
+- rename `config.json.sample` to `config.json` and adjust correct paths or generate with `./pack.sh init`
 
 ### Usage:
 
