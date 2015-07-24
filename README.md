@@ -137,7 +137,7 @@ $ ./path/to/nwjs-build.sh \
 ## NWJS packaging script
 
 - install if not present zip, unzip, tar, git, NSIS
-- rename `config.json.sample` to `config.json` and adjust correct paths or generate with `./pack.sh init`
+- rename `config.json.sample` to `config.json` and adjust correct paths or generate with `./pack.sh init` or specify location of the `config.json` by adding `--config=/path/to/config.json`
 
 ### Usage:
 
@@ -148,6 +148,8 @@ $ ./path/to/nwjs-build.sh \
 `./pack.sh --osx` - to build OSX installers
 
 `./pack.sh --all` - to build installers for all systems
+
+`./pack.sh --all --config=/path/to/config.json` - to build installers for all systems but using `config.json` located in any other path than in root directory 
 
 ### Hooks:
 

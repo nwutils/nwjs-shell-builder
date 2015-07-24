@@ -6,9 +6,14 @@ set -e
 BUILD_DIR=`pwd`
 WORKING_DIR="${BUILD_DIR}/TMP"
 RELEASE_DIR="${BUILD_DIR}/releases"
+CONFIG_FILE="${BUILD_DIR}/config.json"
+
+if [[ "${2}" =~ "--config" ]]; then
+    CONFIG_FILE="${2#*=}";
+fi
 
 get_value_by_key() {
-    JSON_FILE=${BUILD_DIR}/config.json
+    JSON_FILE=${CONFIG_FILE}
     KEY=${1}
     REGEX="(?<=\"${KEY}\":.\")[^\"]*"
     JSON_VALUE=$(cat ${JSON_FILE} | grep -Po ${REGEX})
