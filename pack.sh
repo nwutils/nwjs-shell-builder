@@ -141,15 +141,14 @@ pack_osx () {
         mkdir -p ${WORKING_DIR}/build_osx/flat/Resources/en.lproj
         mkdir -p ${WORKING_DIR}/build_osx/root/Applications
         cp -r "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
-        (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
         COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
         INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
 cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<pkg-info format-version="2" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" version="$(get_value_by_key version)" install-location="/" auth="root">
+<pkg-info overwrite-permissions="true" relocatable="false" identifier="$(get_value_by_key CFBundleIdentifier)" postinstall-action="none" version="$(get_value_by_key version)" format-version="2" generator-version="InstallCmds-502 (14B25)" auth="root">
     <payload installKBytes="${INSTALL_KB_SIZE}" numberOfFiles="${COUNT_FILES}"/>
     <bundle-version>
-        <bundle id="$(get_value_by_key CFBundleIdentifier)" CFBundleIdentifier="$(get_value_by_key CFBundleIdentifier)" path="./Applications/$(get_value_by_key name).app" CFBundleVersion="$(get_value_by_key version)"/>
+        <bundle id="$(get_value_by_key CFBundleIdentifier)" CFBundleIdentifier="$(get_value_by_key CFBundleIdentifier)" path="./Applications/$(get_value_by_key name).app" CFBundleVersion="1.3.0"/>
     </bundle-version>
     <update-bundle/>
     <atomic-update-bundle/>
@@ -169,7 +168,7 @@ cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
     <script>function pm_install_check() {
       if(!(system.compareVersions(system.version.ProductVersion,'10.5') >= 0)) {
         my.result.title = 'Failure';
-        my.result.message = 'You need at least Mac OS X 10.5 to install ${APPNAME}.';
+        my.result.message = 'You need at least Mac OS X 10.5 to install ${PKG_NAME}.';
         my.result.type = 'Fatal';
         return false;
       }
@@ -186,8 +185,9 @@ cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 </installer-script>
 osx_distribution_helper
 
+    (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
     ${WORKING_DIR}/bomutils/build/bin/mkbom -u 0 -g 80 ${WORKING_DIR}/build_osx/root ${WORKING_DIR}/build_osx/flat/base.pkg/Bom
-    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" * )
+    (cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" *)
     printf "\nDone OSX ${arch}\n"
     done;
 }
