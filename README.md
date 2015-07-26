@@ -141,6 +141,8 @@ $ ./path/to/nwjs-build.sh \
 
 ### Usage:
 
+`./pack.sh init` - generate `config.json` with interactive CMD
+
 `./pack.sh --windows` - to build Windows installers
 
 `./pack.sh --linux` - to build Linux installers
@@ -149,7 +151,11 @@ $ ./path/to/nwjs-build.sh \
 
 `./pack.sh --all` - to build installers for all systems
 
-`./pack.sh --all --config=/path/to/config.json` - to build installers for all systems but using `config.json` located in any other path than in root directory 
+`./pack.sh --all --config=/path/to/config.json` - to build installers for all systems but using `config.json` located in any other path than in root directory
+ 
+`./pack.sh --clean` - removes the `./TMP` working directory
+
+`./pack.sh --clean all` - removes the `./TMP` working directory and `releases` directory (with all the content) 
 
 ### Hooks:
 
