@@ -42,7 +42,12 @@ DESCRIPTION
 
 DEPENDENCIES
 
-    NSIS, Zip, tar, ImageMagick, cpio
+    Zip (all)
+    tar (all)
+    NSIS (Windows installer)
+    ImageMagick (OSX installer)
+    cpio (OSX installer)
+    libxml2 (OSX installer)
 
 USAGE
 
@@ -76,7 +81,7 @@ init_config_file() {
   read -e -p "Application name (no spaces): " CONF_NAME;
   read -e -p "Application version: " -i "1.0.0" CONF_VERSION;
   read -e -p "Application description: " -i "${CONF_NAME} v${CONF_VERSION} Application" CONF_DESCRIPTION;
-  read -e -p "nwjs version to use: " -i "0.12.2" CONF_NW_VERSION;
+  read -e -p "nwjs version to use: " -i "0.12.3" CONF_NW_VERSION;
   read -e -p "Application src directory path: " CONF_SRC;
   read -e -p "PNG icon path: " CONF_ICON_PNG;
   read -e -p "Windows icon (.ico) path: " CONF_ICON_WIN;
@@ -153,12 +158,13 @@ pack_osx () {
         mkdir -p ${WORKING_DIR}/build_osx/flat/base.pkg
         mkdir -p ${WORKING_DIR}/build_osx/flat/Resources/en.lproj
         mkdir -p ${WORKING_DIR}/build_osx/root/Applications
-        cp -r "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
-        COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
-        INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
+        cp -Rfp "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
+        local COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
+        local INSTALL_KB_SIZE=$(du -b -s ${WORKING_DIR}/build_osx/root)
+	( cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
 cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<pkg-info overwrite-permissions="true" relocatable="false" identifier="$(get_value_by_key CFBundleIdentifier)" postinstall-action="none" version="$(get_value_by_key version)" format-version="2" generator-version="InstallCmds-502 (14B25)" auth="root">
+<pkg-info overwrite-permissions="true" relocatable="false" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" postinstall-action="none" version="$(get_value_by_key version)" format-version="2" generator-version="InstallCmds-502 (14B25)" auth="root">
     <payload installKBytes="${INSTALL_KB_SIZE}" numberOfFiles="${COUNT_FILES}"/>
     <bundle-version>
         <bundle id="$(get_value_by_key CFBundleIdentifier)" CFBundleIdentifier="$(get_value_by_key CFBundleIdentifier)" path="./Applications/$(get_value_by_key name).app" CFBundleVersion="1.3.0"/>
@@ -198,9 +204,8 @@ cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 </installer-script>
 osx_distribution_helper
 
-    (cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
     ${WORKING_DIR}/bomutils/build/bin/mkbom -u 0 -g 80 ${WORKING_DIR}/build_osx/root ${WORKING_DIR}/build_osx/flat/base.pkg/Bom
-    (cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" *)
+    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" * )
     printf "\nDone OSX ${arch}\n"
     done;
 }
