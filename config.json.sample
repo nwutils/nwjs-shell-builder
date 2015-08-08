@@ -1,0 +1,12 @@
+{
+  "name": "MyApp",
+  "version": "1.0.0",
+  "description": "My app description",
+  "src": "/path/to/app/dist",
+  "nwjsVersion": "0.12.2",
+  "iconPath": "/path/to/png/icon/file/icon.png",
+  "windowsIconPath": "/path/to/ico/icon/file/icon.ico",
+  "osxIconPath": "/path/to/icns/icon/file/gisto.icns",
+  "CFBundleIdentifier": "com.myapp.app",
+  "license": "/path/to/LICENSE"
+}
