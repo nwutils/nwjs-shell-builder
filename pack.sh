@@ -158,9 +158,10 @@ pack_osx () {
         mkdir -p ${WORKING_DIR}/build_osx/flat/base.pkg
         mkdir -p ${WORKING_DIR}/build_osx/flat/Resources/en.lproj
         mkdir -p ${WORKING_DIR}/build_osx/root/Applications
-        cp -Rfp "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
+        cp -R "${WORKING_DIR}/osx-${arch}/latest-git/$(get_value_by_key name).app" ${WORKING_DIR}/build_osx/root/Applications/
+	( cd ${WORKING_DIR}/build_osx/root/Applications && chmod -R a+xr $(get_value_by_key name).app )
         local COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
-        local INSTALL_KB_SIZE=$(du -b -s ${WORKING_DIR}/build_osx/root)
+        local INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
 	( cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
 cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
@@ -172,7 +173,6 @@ cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageIn
     <update-bundle/>
     <atomic-update-bundle/>
     <strict-identifier/>
-    <relocate/>
     <scripts/>
 </pkg-info>
 osx_packageinfo_helper
@@ -182,7 +182,7 @@ cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 <installer-script minSpecVersion="1.000000" authoringTool="com.apple.PackageMaker" authoringToolVersion="3.0.3" authoringToolBuild="174">
     <title>${PKG_NAME} $(get_value_by_key version)</title>
     <options customize="never" allow-external-scripts="no"/>
-    <domains enable_anywhere="true"/>
+    <domains enable_anywhere="false"/>
     <installation-check script="pm_install_check();"/>
     <script>function pm_install_check() {
       if(!(system.compareVersions(system.version.ProductVersion,'10.5') >= 0)) {
