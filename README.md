@@ -14,7 +14,7 @@ What's in here:
 		- [Build only for windows 64 and 32 bit targets](#build-only-for-windows-64-and-32-bit-targets)
 		- [build only for OSX 32 bit target](#build-only-for-osx-32-bit-target)
 		- [Build for all 64 bit](#build-only-for-all-64-bit)
-- [Packaging script](#nwjs-packaging-script)
+- [Packaging script](#nwjs-packaging-script) _(currently in **BETA**)_
 	- [Hooks](#hooks)
 	- [Usage](#usage-1)
 - [License](#license)
@@ -134,9 +134,11 @@ $ ./path/to/nwjs-build.sh \
     --build
 ```
 
-## NWJS packaging script
+## NWJS packaging script _(currently in **BETA**)_
 
-- install if not present zip, unzip, tar, git, NSIS
+> :exclamation: Please note that this is currently in BETA and it is not affecting the `build` script. You may off course use it but beta warning applies with all consequenses, so don't expect it to work out-of-the-box.
+
+- install if not present zip, unzip, tar, git, NSIS, libxml2
 - rename `config.json.sample` to `config.json` and adjust correct paths or generate with `./pack.sh init` or specify location of the `config.json` by adding `--config=/path/to/config.json`
 
 ### Usage:
