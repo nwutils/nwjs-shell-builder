@@ -14,7 +14,7 @@ What's in here:
 		- [Build only for windows 64 and 32 bit targets](#build-only-for-windows-64-and-32-bit-targets)
 		- [build only for OSX 32 bit target](#build-only-for-osx-32-bit-target)
 		- [Build for all 64 bit](#build-only-for-all-64-bit)
-- [Packaging script](#nwjs-packaging-script) _(currently in **BETA**)_
+- [Packaging script](#nwjs-packaging-script-currently-in-beta) _(currently in **BETA**)_
 	- [Hooks](#hooks)
 	- [Usage](#usage-1)
 - [License](#license)
