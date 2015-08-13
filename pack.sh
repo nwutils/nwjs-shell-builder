@@ -86,6 +86,7 @@ init_config_file() {
   read -e -p "PNG icon path: " CONF_ICON_PNG;
   read -e -p "Windows icon (.ico) path: " CONF_ICON_WIN;
   read -e -p "OSX icon (.icns) path: " CONF_ICON_OSX;
+  read -e -p "OSX .pkg background file path" CONF_osxBgPath
   read -e -p "OSX CFBundleIdentifier: " CONF_CFBundleIdentifier;
   read -e -p "License file path: " CONF_LICENSE;
 
@@ -99,6 +100,7 @@ cat << create_conf > config.json
   "iconPath": "${CONF_ICON_PNG}",
   "windowsIconPath": "${CONF_ICON_WIN}",
   "osxIconPath": "${CONF_ICON_OSX}",
+  "osxBgPath": "${CONF_osxBgPath}",
   "CFBundleIdentifier": "${CONF_CFBundleIdentifier}",
   "license": "${CONF_LICENSE}"
 }
@@ -163,6 +165,7 @@ pack_osx () {
         local COUNT_FILES=$(find ${WORKING_DIR}/build_osx/root | wc -l)
         local INSTALL_KB_SIZE=$(du -k -s ${WORKING_DIR}/build_osx/root | awk '{print $1}')
 	( cd ${WORKING_DIR}/build_osx/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${WORKING_DIR}/build_osx/flat/base.pkg/Payload
+
 cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageInfo
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <pkg-info overwrite-permissions="true" relocatable="false" identifier="$(get_value_by_key CFBundleIdentifier).base.pkg" postinstall-action="none" version="$(get_value_by_key version)" format-version="2" generator-version="InstallCmds-502 (14B25)" auth="root">
@@ -177,11 +180,18 @@ cat << osx_packageinfo_helper > ${WORKING_DIR}/build_osx/flat/base.pkg/PackageIn
 </pkg-info>
 osx_packageinfo_helper
 
+local BG=$(get_value_by_key osxBgPath)
+if [[ -f ${BG} ]];then
+    cp "${BG}" "${WORKING_DIR}/build_osx/flat/Resources/en.lproj/background"
+    local BG_NODE='<background file="background" alignment="bottomleft" scaling="none"/>'
+fi
+
 cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 <?xml version="1.0" encoding="utf-8"?>
 <installer-script minSpecVersion="1.000000" authoringTool="com.apple.PackageMaker" authoringToolVersion="3.0.3" authoringToolBuild="174">
     <title>${PKG_NAME} $(get_value_by_key version)</title>
     <options customize="never" allow-external-scripts="no"/>
+    ${BG_NODE}
     <domains enable_anywhere="false"/>
     <installation-check script="pm_install_check();"/>
     <script>function pm_install_check() {
