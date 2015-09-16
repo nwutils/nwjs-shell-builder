@@ -68,7 +68,7 @@ USAGE
     $ ./pack.sh --clean all - removes the 'TMP' working directory and 'releases' directory (with all the content)
 
     Hooks:
-    Place hhoks in "./hooks/" directory
+    Place hooks in "./hooks/" directory
         - file name 'before.sh' will be executed befor each build
         - file name 'after.sh' will be executed after pack script is finished
         - file name 'after_build.sh' will be executed after each platform build is finished
