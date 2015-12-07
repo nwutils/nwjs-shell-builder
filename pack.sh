@@ -86,7 +86,7 @@ init_config_file() {
   read -e -p "PNG icon path: " CONF_ICON_PNG;
   read -e -p "Windows icon (.ico) path: " CONF_ICON_WIN;
   read -e -p "OSX icon (.icns) path: " CONF_ICON_OSX;
-  read -e -p "OSX .pkg background file path" CONF_osxBgPath
+  read -e -p "OSX .pkg background file path: " CONF_osxBgPath
   read -e -p "OSX CFBundleIdentifier: " CONF_CFBundleIdentifier;
   read -e -p "License file path: " CONF_LICENSE;
 
