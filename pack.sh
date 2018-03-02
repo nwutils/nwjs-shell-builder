@@ -306,7 +306,7 @@ elif [[ ${1} = "--linux" ]]; then
 elif [[ ${1} = "--osx" ]]; then
     clean;
     hook "before";
-    build "4 5";
+    build "4";
     hook "after_build";
     pack_osx;
     hook "after";
@@ -320,7 +320,7 @@ elif [[ ${1} = "--windows" ]]; then
 elif [[ ${1} = "--all" ]]; then
     clean;
     hook "before";
-    build "0 1 2 3 4 5";
+    build "0 1 2 3 4";
     hook "after_build";
     pack_osx;
     pack_linux;
