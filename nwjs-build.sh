@@ -35,9 +35,8 @@ PKG_SRC="../../dist"
 # 1 - linux-x64
 # 2 - win-ia32
 # 3 - win-x64
-# 4 - osx-ia32
-# 5 - osx-x64
-TARGET="0 1 2 3 4 5"
+# 4 - osx-x64
+TARGET="0 1 2 3 4"
 
 # Final output directory (relative to current directory where this script running from)
 RELEASE_DIR="${WORKING_DIR}/${TMP}/output"
@@ -144,8 +143,7 @@ OPTIONS
                 1 - linux-x64
                 2 - win-ia32
                 3 - win-x64
-                4 - osx-ia32
-                5 - osx-x64
+                4 - osx-x64
 
     --nw=VERSION
 
@@ -198,7 +196,7 @@ EXAMPLES
                 --win-icon=${HOME}/projects/resorses/icon.ico \\
                 --osx-icon=${HOME}/projects/resorses/icon.icns \\
                 --CFBundleIdentifier=com.bundle.name \\
-                --target="0 1 2 3 4 5" \\
+                --target="0 1 2 3 4" \\
                 --version="1.0.0" \\
                 --libudev \\
                 --nw=0.11.6 \\
@@ -215,7 +213,7 @@ EXAMPLES
                 --version="1.0.0" \\
                 --build
 
-    BUILD ONLY FOR OSX 32 BIT TARGET:
+    BUILD ONLY FOR OSX 64 BIT TARGET:
 
         SHELL> ./nwjs-build.sh \\
                 --src=${HOME}/projects/${PKG_NAME}/src \\
@@ -234,7 +232,7 @@ EXAMPLES
                 --name=${PKG_NAME} \\
                 --osx-icon=${HOME}/projects/resorses/icon.icns \\
                 --win-icon=${HOME}/projects/resorses/icon.ico \\
-                --target="1 3 5 " \\
+                --target="1 3 4 " \\
                 --version="1.0.0" \\
                 --libudev \\
                 --build
