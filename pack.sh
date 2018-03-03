@@ -154,8 +154,8 @@ pack_osx () {
         if [[ ! -d "${WORKING_DIR}/bomutils" ]]; then
             git clone https://github.com/hogliux/bomutils && cd bomutils && make && cd ${WORKING_DIR}
         fi
-        if [[ ! -d "${WORKING_DIR}/xar-1.5.2" ]]; then
-            wget https://github.com/mackyle/xar/archive/xar-1.5.2.tar.gz && tar -zxvf ./xar-1.5.2.tar.gz && cd xar-1.5.2 && ./configure && make && cd ${WORKING_DIR}
+        if [[ ! -d "${WORKING_DIR}/xar-xar-1.5.2" ]]; then
+            wget https://github.com/mackyle/xar/archive/xar-1.5.2.tar.gz && tar -zxvf ./xar-1.5.2.tar.gz && cd xar-xar-1.5.2 && ./configure && make && cd ${WORKING_DIR}
         fi
 
         mkdir -p ${WORKING_DIR}/build_osx/flat/base.pkg
@@ -216,7 +216,7 @@ cat << osx_distribution_helper > ${WORKING_DIR}/build_osx/flat/Distribution
 osx_distribution_helper
 
     ${WORKING_DIR}/bomutils/build/bin/mkbom -u 0 -g 80 ${WORKING_DIR}/build_osx/root ${WORKING_DIR}/build_osx/flat/base.pkg/Bom
-    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" * )
+    ( cd ${WORKING_DIR}/build_osx/flat/ && ${WORKING_DIR}/xar-xar-1.5.2/src/xar --compression none -cf "${RELEASE_DIR}/${PKG_NAME}-$(get_value_by_key version)-OSX-${arch}.pkg" * )
     printf "\nDone OSX ${arch}\n"
     done;
 }
