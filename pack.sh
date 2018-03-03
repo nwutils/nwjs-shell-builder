@@ -28,6 +28,7 @@ if [[ ! -f "${WORKING_DIR}" ]]; then
 fi
 
 architechture="ia32 x64"
+architechtureMacos="x64"
 
 usage() {
 clear && cat <<EOF
@@ -148,7 +149,7 @@ pack_linux () {
 }
 
 pack_osx () {
-    for arch in ${architechture[@]}; do
+    for arch in ${architechtureMacos[@]}; do
         cd ${WORKING_DIR}
         if [[ ! -d "${WORKING_DIR}/bomutils" ]]; then
             git clone https://github.com/hogliux/bomutils && cd bomutils && make && cd ${WORKING_DIR}
