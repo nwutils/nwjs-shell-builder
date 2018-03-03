@@ -155,7 +155,7 @@ pack_osx () {
             git clone https://github.com/hogliux/bomutils && cd bomutils && make && cd ${WORKING_DIR}
         fi
         if [[ ! -d "${WORKING_DIR}/xar-xar-1.5.2" ]]; then
-            wget https://github.com/mackyle/xar/archive/xar-1.5.2.tar.gz && tar -zxvf ./xar-1.5.2.tar.gz && cd xar-xar-1.5.2 && ./configure && make && cd ${WORKING_DIR}
+            wget https://github.com/mackyle/xar/archive/xar-1.5.2.tar.gz && tar -zxvf ./xar-1.5.2.tar.gz && cd xar-xar-1.5.2 && ./autogen.sh && make && cd ${WORKING_DIR}
         fi
 
         mkdir -p ${WORKING_DIR}/build_osx/flat/base.pkg
