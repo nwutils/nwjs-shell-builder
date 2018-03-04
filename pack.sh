@@ -125,22 +125,23 @@ pack_linux () {
         mv ${PKG_MK_DIR}/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)
         mv ${PKG_MK_DIR}/$(get_value_by_key name)/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
         # replaces
-        replace -s PKGNAME $(get_value_by_key name)} -- ${PKG_MK_DIR}/README
-        replace -s PKGDESCRIPTION "$(get_value_by_key description)" -- ${PKG_MK_DIR}/README
-        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
-        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/setup
+        sed -i "s/PKGNAME/$(get_value_by_key name)/gi" {PKG_MK_DIR}/README
+        sed -i "s/PKGDESCRIPTION/$(get_value_by_key description)/gi" {PKG_MK_DIR}/README
+        sed -i "s/PKGNAME/$(get_value_by_key name)/gi" ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
+        sed -i "s/PKGNAME/$(get_value_by_key name)/gi" ${PKG_MK_DIR}/setup
         # app file
-        cp $(get_value_by_key iconPath) ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).png
-        convert ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).png ${PKG_MK_DIR}/$(get_value_by_key name)/pixmaps/$(get_value_by_key name).xpm
-        cp ${BUILD_DIR}/TMP/linux-${arch}/latest-git/* ${PKG_MK_DIR}/$(get_value_by_key name)/
+        mkdir ${PKG_MK_DIR}/share/pixmaps
+        cp $(get_value_by_key iconPath) ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).png
+        convert ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).png ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).xpm
+        cp -r ${BUILD_DIR}/TMP/linux-${arch}/latest-git/* ${PKG_MK_DIR}/$(get_value_by_key name)/
         mv ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name) ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)-bin
         # application
         mv ${PKG_MK_DIR}/share/applications/PKGNAME.desktop ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
-        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
-        replace -s PKGVERSION $(get_value_by_key version) -- ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
+        sed -i "s/PKGNAME/$(get_value_by_key name)/gi" ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
+        sed -i "s/PKGVERSION/$(get_value_by_key version)/gi" ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
         # menu
         mv ${PKG_MK_DIR}/share/menu/PKGNAME ${PKG_MK_DIR}/share/menu/$(get_value_by_key name)
-        replace -s PKGNAME $(get_value_by_key name) -- ${PKG_MK_DIR}/share/menu/$(get_value_by_key name)
+        sed -i "s/PKGNAME/$(get_value_by_key name)/gi" ${PKG_MK_DIR}/share/menu/$(get_value_by_key name)
         # make the tar
         tar -C ${WORKING_DIR} -czf $(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}.tar.gz $(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
         mv ${WORKING_DIR}/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}.tar.gz ${RELEASE_DIR}
@@ -233,7 +234,25 @@ pack_windows() {
             NWJS_APP_REPLACE_LICENSE $(get_value_by_key license) \
             NWJS_APP_REPLACE_VERSION $(get_value_by_key version) \
             NWJS_APP_REPLACE_EXE_NAME $(get_value_by_key name)-$(get_value_by_key version)-Windows-${arch}.exe \
-            NWJS_APP_REPLACE_INC_FILES ${BUILD_DIR}/TMP/win-${arch}/latest-git/* \
+            NWJS_APP_REPLACE_INC_FILES_locales ${BUILD_DIR}/TMP/win-${arch}/latest-git/locales \
+            NWJS_APP_REPLACE_INC_FILES_swiftshader ${BUILD_DIR}/TMP/win-${arch}/latest-git/swiftshader \
+            NWJS_APP_REPLACE_INC_FILES_APP ${BUILD_DIR}/TMP/win-${arch}/latest-git/$(get_value_by_key name).exe \
+            NWJS_APP_REPLACE_INC_FILES_credits.html ${BUILD_DIR}/TMP/win-${arch}/latest-git/credits.html \
+            NWJS_APP_REPLACE_INC_FILES_d3dcompiler_47.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/d3dcompiler_47.dll \
+            NWJS_APP_REPLACE_INC_FILES_ffmpeg.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/ffmpeg.dll \
+            NWJS_APP_REPLACE_INC_FILES_icon.ico ${BUILD_DIR}/TMP/win-${arch}/latest-git/icon.ico \
+            NWJS_APP_REPLACE_INC_FILES_icudtl.dat ${BUILD_DIR}/TMP/win-${arch}/latest-git/icudtl.dat \
+            NWJS_APP_REPLACE_INC_FILES_libEGL.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/libEGL.dll \
+            NWJS_APP_REPLACE_INC_FILES_libGLESv2.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/libGLESv2.dll \
+            NWJS_APP_REPLACE_INC_FILES_natives_blob.bin ${BUILD_DIR}/TMP/win-${arch}/latest-git/natives_blob.bin \
+            NWJS_APP_REPLACE_INC_FILES_natives_blob.bin ${BUILD_DIR}/TMP/win-${arch}/latest-git/natives_blob.bin \
+            NWJS_APP_REPLACE_INC_FILES_nw.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw.dll \
+            NWJS_APP_REPLACE_INC_FILES_nw.exe ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw.exe \
+            NWJS_APP_REPLACE_INC_FILES_nw_100_percent.pak ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw_100_percent.pak \
+            NWJS_APP_REPLACE_INC_FILES_nw_200_percent.pak ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw_200_percent.pak \
+            NWJS_APP_REPLACE_INC_FILES_nw_elf.dll ${BUILD_DIR}/TMP/win-${arch}/latest-git/nw_elf.dll \
+            NWJS_APP_REPLACE_INC_FILES_resources.pak ${BUILD_DIR}/TMP/win-${arch}/latest-git/resources.pak \
+            NWJS_APP_REPLACE_INC_FILES_snapshot_blob.bin ${BUILD_DIR}/TMP/win-${arch}/latest-git/snapshot_blob.bin \
             NWJS_APP_REPLACE_ICO_FILE_NAME $(basename $(get_value_by_key windowsIconPath)) \
             NWJS_APP_REPLACE_INC_FILE_ICO $(get_value_by_key windowsIconPath) -- app.nsi;
         makensis app.nsi

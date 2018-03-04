@@ -34,7 +34,25 @@ Section "${APPNAME}" Section1
 
 	;;; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\"
-	File /r "NWJS_APP_REPLACE_INC_FILES"
+	File "NWJS_APP_REPLACE_INC_FILES_locales"
+    File "NWJS_APP_REPLACE_INC_FILES_swiftshader"
+    File "NWJS_APP_REPLACE_INC_FILES_APP"
+    File "NWJS_APP_REPLACE_INC_FILES_credits.html"
+    File "NWJS_APP_REPLACE_INC_FILES_d3dcompiler_47.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_ffmpeg.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_icon.ico"
+    File "NWJS_APP_REPLACE_INC_FILES_icudtl.dat"
+    File "NWJS_APP_REPLACE_INC_FILES_libEGL.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_libGLESv2.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_natives_blob.bin"
+    File "NWJS_APP_REPLACE_INC_FILES_node.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_nw.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_nw.exe"
+    File "NWJS_APP_REPLACE_INC_FILES_nw_100_percent.pak"
+    File "NWJS_APP_REPLACE_INC_FILES_nw_200_percent.pak"
+    File "NWJS_APP_REPLACE_INC_FILES_nw_elf.dll"
+    File "NWJS_APP_REPLACE_INC_FILES_resources.pak"
+    File "NWJS_APP_REPLACE_INC_FILES_snapshot_blob.bin"
 	File "NWJS_APP_REPLACE_INC_FILE_ICO"
 
 	CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${APPNAME}.exe" "" $INSTDIR\NWJS_APP_REPLACE_ICO_FILE_NAME" 0
