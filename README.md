@@ -1,5 +1,7 @@
 # nwjs application shell builder and packager
 
+:rotating_light: **NOTE!** This repository in no longer maintained
+
 What's in here:
 
 - [Builder script](#nwjs-shell-builder-script)
