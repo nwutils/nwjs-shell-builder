@@ -120,7 +120,7 @@ check_dependencies() {
 pack_linux () {
     for arch in ${architechture[@]}; do
         cd ${WORKING_DIR}
-        cp -r ${BUILD_DIR}/resources/linux/PKGNAME-VERSION-Linux ${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
+        cp -R ${BUILD_DIR}/resources/linux/PKGNAME-VERSION-Linux ${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
         PKG_MK_DIR=${BUILD_DIR}/TMP/$(get_value_by_key name)-$(get_value_by_key version)-Linux-${arch}
         mv ${PKG_MK_DIR}/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)
         mv ${PKG_MK_DIR}/$(get_value_by_key name)/PKGNAME ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)
@@ -133,7 +133,7 @@ pack_linux () {
         mkdir ${PKG_MK_DIR}/share/pixmaps
         cp $(get_value_by_key iconPath) ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).png
         convert ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).png ${PKG_MK_DIR}/share/pixmaps/$(get_value_by_key name).xpm
-        cp -r ${BUILD_DIR}/TMP/linux-${arch}/latest-git/* ${PKG_MK_DIR}/$(get_value_by_key name)/
+        cp -R ${BUILD_DIR}/TMP/linux-${arch}/latest-git/* ${PKG_MK_DIR}/$(get_value_by_key name)/
         mv ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name) ${PKG_MK_DIR}/$(get_value_by_key name)/$(get_value_by_key name)-bin
         # application
         mv ${PKG_MK_DIR}/share/applications/PKGNAME.desktop ${PKG_MK_DIR}/share/applications/$(get_value_by_key name).desktop
@@ -225,8 +225,8 @@ osx_distribution_helper
 pack_windows() {
     for arch in ${architechture[@]}; do
         cd ${WORKING_DIR}
-        cp -r ${BUILD_DIR}/resources/windows/app.nsi ${WORKING_DIR}
-        cp -r $(get_value_by_key windowsIconPath) ${BUILD_DIR}/TMP/win-${arch}/latest-git/
+        cp -R ${BUILD_DIR}/resources/windows/app.nsi ${WORKING_DIR}
+        cp -R $(get_value_by_key windowsIconPath) ${BUILD_DIR}/TMP/win-${arch}/latest-git/
         # Replce paths and vars in nsi script
         replace \
             NWJS_APP_REPLACE_APPNAME "$(get_value_by_key name)" \
