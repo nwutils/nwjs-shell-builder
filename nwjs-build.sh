@@ -295,7 +295,7 @@ mk_linux() {
 cat ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw > ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
         rm ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
         chmod +x ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}
-        cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/* ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
+        cp -R ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/* ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
         cd ${WORKING_DIR}/${TMP}/${1}/latest-git
 
         if [[ ${LIBUDEV_HANDLER} = "true" ]];then
@@ -328,7 +328,7 @@ gisto_libudev_helper
         chmod +x ./${PKG_NAME}
         fi
 
-        zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+        zip -qq -ry ${PKG_NAME}-${DATE}-${1}.zip *;
         mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
         cd ${WORKING_DIR};
 }
@@ -340,7 +340,7 @@ mk_windows() {
     if [[ -f "${WIN_RESOURCE_ICO}" ]];then
         cp ${WIN_RESOURCE_ICO} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
     fi
-	cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/* ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
+	cp -R ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/* ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/
 
     cd ${WORKING_DIR}/${TMP}/${1}/latest-git
     zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
@@ -349,8 +349,8 @@ mk_windows() {
 }
 
 mk_osx() {
-    cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/*.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
-    cp -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
+    cp -R ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/*.app ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app;
+    cp -R ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/app.nw;
     rm -r ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw
 
 	# check if it is nwjs or node-webkit
@@ -361,7 +361,7 @@ mk_osx() {
 	fi
 
     if [[ -f "${OSX_RESOURCE_ICNS}" ]];then
-        cp -r ${OSX_RESOURCE_ICNS} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
+        cp -R ${OSX_RESOURCE_ICNS} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.app/Contents/Resources/
     else
         OSX_RESOURCE_ICNS="${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs/node-webkit.app/Contents/Resources/nw.icns"
     fi
@@ -411,7 +411,7 @@ cat << gisto_plist_helper >> ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PK
 </plist>
 gisto_plist_helper
     cd ${WORKING_DIR}/${TMP}/${1}/latest-git
-    zip -qq -r ${PKG_NAME}-${DATE}-${1}.zip *;
+    zip -qq -ry ${PKG_NAME}-${DATE}-${1}.zip *;
     mv ${PKG_NAME}-${DATE}-${1}.zip ${RELEASE_DIR};
     cd ${WORKING_DIR};
 }
@@ -434,10 +434,10 @@ build() {
             mv ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/*-v${NW_VERSION}-${ARR_OS[$i]} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/nwjs;
 
             if [[ `split_string "${ARR_OS[$i]}" "-"` = "osx" ]]; then
-                cp -r ${PKG_SRC} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
+                cp -R ${PKG_SRC} ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
             else
                 cd ${PKG_SRC};
-                zip -qq -r ${PKG_NAME}.zip *;
+                zip -qq -ry ${PKG_NAME}.zip *;
                 mv ${PKG_NAME}.zip ${WORKING_DIR}/${TMP}/${ARR_OS[$i]}/latest-git/${PKG_NAME}.nw;
                 cd ${WORKING_DIR};
             fi
