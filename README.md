@@ -1,6 +1,6 @@
-# nwjs application shell builder and packager
+> This repository is in maintainance mode. Bug fixes will be provided on a best effort basis. If you use this project, please consider contributing back.
 
-:rotating_light: **NOTE!** This repository in no longer maintained **if you are looking for something similar and maintained** please check-out https://github.com/lgodard/nwjs-node-packager which allows to package (linux, win, osx) nwjs app with optionally binary V8 snapshot to protect/obfuscate sources.
+# nwjs application shell builder and packager
 
 What's in here:
 
